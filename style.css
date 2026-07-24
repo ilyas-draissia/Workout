@@ -41,10 +41,10 @@
     aspect-ratio: 0.36391912908242612752721617418351;
 }
 .back{
-    background-image: url(/assets/back_back.svg);
+    background-image: url(back_back.svg);
 }
 .front{
-    background-image: url(/assets/body\ icons_front.svg);
+    background-image: url(body\ icons_front.svg);
 }
 html{
     font-family: 'Outfit', sans-serif;
