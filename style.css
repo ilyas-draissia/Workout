@@ -75,6 +75,7 @@ body{
     background-color: var(--bg);
     border: 1px solid var(--border);
     border-radius: 20px;
+    min-width: 0;
 }
 .hero{
     display: flex;
@@ -158,7 +159,8 @@ body{
     padding: .5rem;
     border-radius: 5px;
     margin-inline: 1rem;
-    height: max-content;
+    height: 80px;
+    overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
@@ -168,10 +170,11 @@ body{
     color: var(--bg);
     padding: .5rem .3rem;
     border-radius: 2px;
+    height: fit-content;
 }
-/* .head-2{
-    padding: 1.5rem;
-} */
+.head.selected{
+    background-color: var(--primary);
+}
 .exercise__type {
     background-color: var(--primary-muted);
     border: 2px solid var(--primary);
@@ -179,17 +182,22 @@ body{
     padding:5px;
 }
 .exercise__types{
-    margin-inline: 1rem;
-    height: 2rem;
+    margin-inline: auto;
+    min-height: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    overflow-x:visible;
 }
 .exercise__list{
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
-    max-height: 130px;
-    margin: 0 1px 20px 1rem;
+    overflow-y: auto;
+    flex: 1 1 130px;
+    margin: 0 1rem 20px 1rem;
     gap: .5rem;
     border-radius: 5px;
+    border: 1px solid var(--border);
 }
 .list__card{
     background-color: var(--bg-light);
@@ -197,7 +205,7 @@ body{
     display: flex;
     justify-content: space-between;
     gap: .5rem;
-    padding: .5rem 1rem .5rem .5rem;
+    padding: .5rem ;
 }
 .exercise__name{
     font-size: 1.5rem;
@@ -205,10 +213,20 @@ body{
 .card__buttons, .card__text{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    justify-content: space-between;
+}
+.card__text{
+    width: fit-content;
+    gap: .5rem;
 }
 .card__buttons{
+    width: 2rem;
+    position: relative;
+}
+.card__button--play{
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -60%);
     width: 2rem;
 }
 .exercise__type.selected{
@@ -219,7 +237,13 @@ body{
 .head.selected{
     background-color: var(--primary-muted);
     color: var(--text);
-    padding: .6rem .5rem;
+    padding: .5rem .3rem;
+}
+.selected.shape, .muscle.selected > .shape{
+    background-color: hsl(160,73%,65%);
+}
+.active.shape, .muscle.active > .shape{
+    background-color: #852b4f;
 }
 .selected .collapsed-btn{
     visibility:visible;
@@ -244,26 +268,30 @@ body{
 .plus,.minus{
     background-color: var(--bg-light);
     padding-inline:.4rem ;
+    height: 1.5rem;
 }
 .program__form{
     display: flex;
+    margin-inline: .5rem;
 }
 .program__rep,.program__set,.program__weight{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-inline: .5rem;
-    width: 30%;
+    align-items: center;
+    flex: 1 1 30%;
+    gap: .5rem;
 }
-.reps, .sets, .weight{
+/* .reps, .sets, .weight{
     margin:1rem auto;
-}
+} */
 .weight__types{
     margin-right: auto ;
     margin-left: 1rem;
 }
 #weight,#reps,#sets{
     width: 50px;
+    height: 1.5rem;
     text-align: center;
     background-color: var(--bg-light);
     color: var(--text);
@@ -273,6 +301,11 @@ body{
     display: flex;
     align-items: center;
     gap: .3rem;
+}
+.reps,.sets,.weight{
+    text-align: center;
+    width: 50px;
+    margin-inline: auto;
 }
 .rep__type, .set__type, .weight__type{
     border: 3px solid var(--primary);
@@ -338,11 +371,18 @@ body{
 }
 .program__choice{
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     margin-inline: .5rem;
-    margin-top: 1rem;
+    gap: .5rem;
+    /* margin-top: 1rem; */
+}
+.choice__exercise{
+    display: flex;
+    justify-content: space-between;
+    flex: 1;
     padding: .5rem;
     background-color: var(--bg-light);
+    font-size: 20px;
 }
 .exercise__choice--info{
     display: flex;
@@ -355,7 +395,7 @@ body{
     display: block;
     margin: 0;
     border-radius: 5px;
-    font-size: 1.5rem;
+    font-weight: 500;
     flex: 1 1 100%;
 }
 .choice__weights{
@@ -375,7 +415,7 @@ body{
     width: max-content;
     display: flex;
     margin-inline: auto;
-    margin-top: 1rem;
+    /* margin-top: 1rem; */
     margin-bottom: 1rem;
 }
 .program__unit{
@@ -418,7 +458,7 @@ body{
     flex-wrap: wrap;
     justify-content: space-between;
     padding-inline: .5rem;
-    margin-top: 1rem;
+    /* margin-top: 1rem; */
     gap: .5rem;
 }
 .edit__type{
@@ -442,10 +482,15 @@ body{
     padding: 3px;
 }
 .type__btn{
-    background-color: var(--primary);
     padding:.3rem 0;
     width: 50%;
     border-radius: 14px;
+}
+.type__btns .seperator{
+    margin-inline: 3px;
+}
+.type__btn.selected{
+    background-color: var(--primary);
 }
 .type__btn--day{
     border-radius: 14px 0 0 14px;
@@ -454,19 +499,26 @@ body{
     border-radius: 0 14px 14px 0;
 }
 .edit__calender{
-    flex: 0 0 40%;
     display: grid;
+    flex: .3 1 200px;
     grid-template-columns: repeat(7, 1fr);
     grid-template-rows: repeat(2, 1fr);
     padding: 3px;
     gap: 3px;
     background-color: var(--bg-dark);
     border-radius: 6px;
+    /* border: 2px solid black; */
 }
 .calender__btn{
-    aspect-ratio: 1;
-    border: 3px solid var(--primary);
+    /* aspect-ratio: 1; */
+    border: 3px solid var(--border-muted);
+    color: var(--border);
     border-radius: 3px;
+    font-size: clamp(1rem, 0.909vw + 0.818rem, 1.5rem);
+}
+.calender__btn.selected{
+    border: 3px solid var(--primary);
+    color: var(--primary);
 }
 .visual__table {
     background-color: var(--bg-dark);
@@ -477,8 +529,7 @@ body{
     margin-inline: .5rem;
     grid-template-columns: 1.5rem 2fr 1.2fr 0.6fr 0.6fr 1.5rem;
 }
-.table__headline,
-.table__choice {
+.table__headline,.table__choice {
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
@@ -509,7 +560,7 @@ body{
     gap: .3rem;
 }
 .choice__content {
-    grid-column: 2 / -1; /* skip the number column */
+    grid-column: 2 / -1; 
     display: grid;
     grid-template-columns: subgrid;
     align-items: center;
@@ -534,7 +585,7 @@ body{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 1rem;
+    margin-inline: 1rem;
 }
 .finish__download{
     padding: .5rem 1rem;
@@ -542,7 +593,39 @@ body{
     background-color: var(--primary);
     border-radius: 5px;
 }
+.hero__program{
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+    padding-bottom: 1rem;
+    gap: 1rem;
+}
+.muted{
 
+}
+.hero__program{
+    container-name: program-container;
+    container-type: inline-size;
+}
+/* @container program-container (width > 537px) {
+    .program__form > div{
+        flex-wrap: nowrap;
+    }
+    .reps,.sets,.weight{
+        margin-inline: auto;
+    }
+} */
+      
+html::-webkit-scrollbar-track {
+    border-radius: 8px;
+}
+        
+html::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+}
+html::-webkit-scrollbar-button {
+    display: none;
+}
 @media screen and (width >= 449px) {
     .hero{
         flex-direction: row;
@@ -571,7 +654,7 @@ body{
     }
     .hero__body{
         flex: 1 1 15%;
-        padding: 3.7rem .5rem;
+        padding: 3.7rem 0;
         padding-bottom: max(3.7rem,2rem);
         height: initial;
         justify-content: space-between;
@@ -582,9 +665,9 @@ body{
     .hero__program{
         flex: 1 1 45%;
     }
-    .program__rep,.program__set,.program__weight{
+    /* .program__rep,.program__set,.program__weight{
         margin-inline: .5rem;
-    }
+    } */
     .plus, .minus {
         background-color: var(--bg-light);
         padding-inline: .3rem;
@@ -595,13 +678,28 @@ body{
     .edit__add{
     background-color: var(--primary);
     padding: .5rem 1rem;
-    display: block;
-    margin: 0;
     border-radius: 5px;
-    font-size: 1.5rem;
-    flex: 0 0 30%;
+    flex: 0 0 20%;
     }
-    .visual__edit{
-        justify-content:initial;
+    .hero {
+        height: calc(100dvh - 3.5rem);
     }
+    .hero__body, .hero__exercise, .hero__program {
+        height: 100%;
+    }
+    .visual__table {
+        flex: 1 0 130px;
+        overflow-y: scroll;
+    }
+    .program__choice{
+        flex-direction: row;
+        align-items: center;
+    }
+    .hero__program{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 1rem;
+    gap: 0;
+}
 }

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="shapes.css">
     <link rel="stylesheet" href="boilerplate.css">
     <script src="script.js" defer></script>
+    <link rel="shortcut icon" href="workout 1.svg" type="image/x-icon">
     <title>Workout</title>
 </head>
 <body>
@@ -70,34 +71,38 @@
   <main class="main">
       <section class="hero">
           <div class="hero__body">
-            <div class="figure back selected">
-              <span class="shape n1"></span>
-              <span class="shape n2"></span>
-              <span class="group__muscle--back">
-                <span class="shape n3"></span>
-                <span class="shape n7"></span>
-                <span class="shape n8"></span>
-                <span class="shape n10"></span>
-                <span class="shape n13"></span>
+            <div class="figure back">
+              <span class="muscle muscle__back">
+                <span class="shape traps--top"></span>
+                <span class="shape obliques--back"></span>
+                <span class="shape traps--lower"></span>
+                <span class="shape teres"></span>
+                <span class="shape lats"></span>
+                <span class="shape extractor--back"></span>
               </span>
-              <span class="shape n4"></span>
-              <span class="shape n5"></span>
-              <span class="shape n6"></span>
-              <span class="shape n9"></span>
-              <span class="shape n11"></span>
-              <span class="shape n12"></span>
+              <span class="muscle muscle__legs--back">
+                <span class="shape glutes--top"></span>
+                <span class="shape glutes--bottom"></span>
+                <span class="shape hams"></span>
+                <span class="shape calves--back"></span>
+              </span>
+              <span class="muscle shape forearm--back"></span>
+              <span class="muscle shape triceps--back"></span>
+              <span class="muscle shape shoulder--back"></span>
             </div>
-            <div class="figure front">
-                <span class="shape n14"></span>
-                <span class="shape n15"></span>
-                <span class="shape n16"></span>
-                <span class="shape n17"></span>
-                <span class="shape n18"></span>
-                <span class="shape n19"></span>
-                <span class="shape n20"></span>
-                <span class="shape n21"></span>
-                <span class="shape n22"></span>
-                <span class="shape n23"></span>
+            <div class="figure front selected">
+                <span class="muscle shape biceps"></span>
+                <span class="muscle muscle__legs--front">
+                  <span class="shape calves--front"></span>
+                  <span class="shape quads"></span>
+                </span>
+                <span class="muscle shape chest"></span>
+                <span class="muscle shape core"></span>
+                <span class="muscle shape forearm--front"></span>
+                <span class="muscle shape neck"></span>
+                <span class="muscle shape shoulder--front"></span>
+                <span class="muscle shape traps--front"></span>
+                <span class="muscle shape triceps--front"></span>
             </div>
             <button class="button__circle button__circle--reverse">
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M544.1 256L552 256C565.3 256 576 245.3 576 232L576 88C576 78.3 570.2 69.5 561.2 65.8C552.2 62.1 541.9 64.2 535 71L483.3 122.8C439 86.1 382 64 320 64C191 64 84.3 159.4 66.6 283.5C64.1 301 76.2 317.2 93.7 319.7C111.2 322.2 127.4 310 129.9 292.6C143.2 199.5 223.3 128 320 128C364.4 128 405.2 143 437.7 168.3L391 215C384.1 221.9 382.1 232.2 385.8 241.2C389.5 250.2 398.3 256 408 256L544.1 256zM573.5 356.5C576 339 563.8 322.8 546.4 320.3C529 317.8 512.7 330 510.2 347.4C496.9 440.4 416.8 511.9 320.1 511.9C275.7 511.9 234.9 496.9 202.4 471.6L249 425C255.9 418.1 257.9 407.8 254.2 398.8C250.5 389.8 241.7 384 232 384L88 384C74.7 384 64 394.7 64 408L64 552C64 561.7 69.8 570.5 78.8 574.2C87.8 577.9 98.1 575.8 105 569L156.8 517.2C201 553.9 258 576 320 576C449 576 555.7 480.6 573.4 356.5z"/></svg>
@@ -105,18 +110,9 @@
             </button>
           </div>
           <div class="hero__exercise">
-            <h2 class="exercise__muscle">Chest</h2>
-            <p class="exercise__text">Muscle head :</p>
+            <h2 class="exercise__muscle">Muscle</h2>
+            <p class="exercise__text">Muscle heads <span class="number--head"></span> :</p>
             <div class="exercise__heads">
-              <button class="head head-1">
-                upper
-              </button>
-              <button class="head head-2">
-                middle
-              </button>
-              <button class="head head-3">
-                lower
-              </button>
             </div>
             <p class="exercise__text">Type of exercise :</p>
             <div class="exercise__types">
@@ -124,48 +120,8 @@
               <button class="exercise__type exercise__type--machine">M<span class="collapsed-btn">achine</span></button>
               <button class="exercise__type exercise__type--body">B<span class="collapsed-btn">odyweight</span></button>
             </div>
-            <p class="exercise__text">Exercises (4) :</p>
+            <p class="exercise__text">Exercises <span class="exercises__number"></span> :</p>
             <div class="exercise__list">
-              <div class="list__card list__card--n1">
-                <div class="card__text">
-                  <h2 class="exercise__name">Bar bench press</h2>
-                  <p class="exercise__number">(1/4)</p>
-                </div>
-                <div class="card__buttons">
-                  <button class="card__button card__button--bookmark"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg></button>
-                  <button class="card__button--play"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg></button>
-                </div>
-              </div>
-              <div class="list__card list__card--n2">
-                <div class="card__text">
-                  <h2 class="exercise__name">Dumbell bench press</h2>
-                  <p class="exercise__number">(2/4)</p>
-                </div>
-                <div class="card__buttons">
-                  <button class="card__button card__button--bookmark"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg></button>
-                  <button class="card__button--play"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg></button>
-                </div>
-              </div>
-              <div class="list__card list__card--n3">
-                <div class="card__text">
-                  <h2 class="exercise__name">Incline bench press</h2>
-                  <p class="exercise__number">(3/4)</p>
-                </div>
-                <div class="card__buttons">
-                  <button class="card__button card__button--bookmark"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg></button>
-                  <button class="card__button--play"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg></button>
-                </div>
-              </div>
-              <div class="list__card list__card--n4">
-                <div class="card__text">
-                  <h2 class="exercise__name">Decline bench press</h2>
-                  <p class="exercise__number">(4/4)</p>
-                </div>
-                <div class="card__buttons">
-                  <button class="card__button card__button--bookmark"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg></button>
-                  <button class="card__button--play"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg></button>
-                </div>
-              </div>
             </div>
           </div>
         <div class="hero__program">
@@ -185,11 +141,11 @@
             </button>
           </div>
           <div class="program__types">
-            <button class="program__type program__type--hyp">Hypertrophy</button>
+            <button class="program__type program__type--hyp selected">Hypertrophy</button>
             <button class="program__type program__type--str">Strength</button>
             <button class="program__type program__type--end">Endurance</button>
             <span class="seperator"></span>
-            <button class="program__unit program__unit--kg">Kg</button>
+            <button class="program__unit program__unit--kg selected">Kg</button>
             <button class="program__unit program__unit--lb">Lb</button>
           </div>
           <form action="" class="program__form">
@@ -213,29 +169,30 @@
               <label for="weight" class="weight">Weight</label>
               <div class="input__number input__number--weight">
                 <input  type="number" name="" id="weight" value="0">
-                <label for="weight" class="weight__unit">kg</label>
                 <button class="plus plus--weight">+</button>
                 <button class="minus minus--weight">-</button>
               </div>
             </div>
           </form>
           <div class="program__choice">
-              <p class="exercise__choice--name">Bar bench press</p>
-              <div class="exercise__choice--info">
-                <div class="choice__weights">
-                  <p class="choice__weight--number">1000</p>
-                  <p class="choice__weight--type">Kg</p>
+              <div class="choice__exercise">
+                <p class="exercise__choice--name">Bar bench press</p>
+                <div class="exercise__choice--info">
+                  <div class="choice__weights">
+                    <p class="choice__weight--number">1000</p>
+                  </div>
+                  <p class="exercise__info--sets">100</p>
+                  <p class="exercise__info--reps">100</p>
                 </div>
-                <p class="choice__info--sets">100</p>
-                <p class="choice__info--reps">100</p>
               </div>
+              <button type="submit" class="edit__add">Add</button>
           </div>
             <div class="program__visual">
               <div class="visual__edit">
-                  <button type="submit" class="edit__add">Add +</button>
                   <div class="edit__type">
                     <div class="type__btns">
                       <button class="type__btn type__btn--day">Day</button>
+                      <span class="seperator"></span>
                       <button class="type__btn type__btn--week">Week</button>
                     </div>
                     <div class="type__name">
@@ -283,7 +240,7 @@
                     </button>
                   </div>
                 </div>
-                <!-- <div class="table__choice">
+                <div class="table__choice">
                   <p class="choice__number">2</p>
                   <div class="choice__content">
                     <p class="content__name">Bar bench press</p>
@@ -297,8 +254,8 @@
                       <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z"/></svg>
                     </button>
                   </div>
-                </div> -->
-                <!-- <div class="table__choice">
+                </div>
+                <div class="table__choice">
                   <p class="choice__number">3</p>
                   <div class="choice__content">
                     <p class="content__name">Bar bench press</p>
@@ -312,7 +269,22 @@
                       <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z"/></svg>
                     </button>
                   </div>
-                </div> -->
+                </div>
+                <div class="table__choice">
+                  <p class="choice__number">3</p>
+                  <div class="choice__content">
+                    <p class="content__name">Bar bench press</p>
+                    <div class="content__weight">
+                      <p class="content__weight--number">1000</p>
+                      <p class="content__weight--type">Kg</p>
+                    </div>
+                    <p class="content__sets">100</p>
+                    <p class="content__reps">100</p>
+                    <button class="content__delete">
+                      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z"/></svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
               <div class="visual__finish">
