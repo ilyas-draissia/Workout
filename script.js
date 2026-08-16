@@ -374,7 +374,7 @@ function renderExercises (){
             }if(muscleHead == 'lower'){
                 return e.name.toLowerCase().includes('decline');
             }if(muscleHead == 'middle'){
-                return !e.name.toLowerCase().includes('incline');
+                return !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline');
             }
             //legs
             if(muscleHead == 'quads'){
