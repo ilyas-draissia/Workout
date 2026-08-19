@@ -27,11 +27,12 @@ const exercisesContainer = document.querySelector('.exercise__list');
 const exercisesNumber = document.querySelector('.exercises__number');
 const BASE_URL = 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
 const endpoint = `${BASE_URL}/api/en/exercises.json`; 
-
+const savedExercises = document.querySelector('.dropdown');
 let muscleName = null; 
 let muscleHead = null;
 let exerciseType = null;
 let exerciseList = [];
+let savedExerciseList = [];
 
 async function fetchGymExercises() {
   try {
@@ -81,13 +82,6 @@ searchBtn.addEventListener("click",(e)=>{
     e.preventDefault();
     searchBtn.classList.toggle('selected');
     bookmarkBtn.classList.remove('selected');
-});
-
-// bookmark list button on the program section
-bookmarkBtn.addEventListener("click",(e)=>{
-    e.preventDefault();
-    bookmarkBtn.classList.toggle('selected');
-    searchBtn.classList.remove('selected');
 });
 
 //program type bar
@@ -198,9 +192,8 @@ const buttonsSelected = (parent)=>{
     })
 };
 
-// buttonsSelected(headBtn);
-buttonsSelected(bookmark);
 buttonsSelected(calenderBtn);
+
 
 muscles.forEach(muscle =>{
     muscle.addEventListener('click',(e)=>{
@@ -345,7 +338,30 @@ exerciseHeads.addEventListener('click',(e)=>{
     }
     renderExercises();
 })
+bookmarkBtn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    bookmarkBtn.classList.toggle('selected');
+})
+function dropdownExercises (){
+    exercisesContainer.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const bookmark = e.target.closest('.card__button--bookmark');
+        const isAlreadySelected = bookmark.classList.contains('selected');
+        const card = e.target.closest('.list__card');
+        const name = card.querySelector('.exercise__name').textContent;
+        if(!isAlreadySelected){
+            bookmark.classList.add('selected');
+            savedExerciseList += name;
+            savedExercises.innerHTML += `
+                <p class="dropdown__element">${name}</p>
+            `;
+        }else{
+            bookmark.classList.remove('selected');
+            // savedExerciseList = [];
+        }
 
+    })
+}
 
 function renderExercises (){
     exercisesContainer.innerHTML = "";
@@ -470,31 +486,32 @@ function renderExercises (){
                 );
             }
             //forearms
-            if (muscleHead == 'brachioradialis') {
-                return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
+            if (muscleHead == 'brac') {
+                return (e.muscle == 'biceps' || e.muscle == 'forearms') && (
                     e.name.toLowerCase().includes('hammer') ||
-                    e.name.toLowerCase().includes('reverse curl') ||
-                    e.name.toLowerCase().includes('neutral grip') ||
-                    e.name.toLowerCase().includes('reverse grip curl') ||
-                    e.name.toLowerCase().includes('zottman')
+                    e.name.toLowerCase().includes('reverse') ||
+                    e.name.toLowerCase().includes('zottman') ||
+                    e.name.toLowerCase().includes('neutral') ||
+                    e.name.toLowerCase().includes('cross body')
                 );
             }
-            if (muscleHead == 'extensors') {
+            if (muscleHead == 'extensor') {
                 return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
                     e.name.toLowerCase().includes('reverse wrist curl') ||
                     e.name.toLowerCase().includes('palms down') ||
                     e.name.toLowerCase().includes('wrist extension')
                 );
             }
-            if (muscleHead == 'flexors') {
+            if (muscleHead == 'flexor') {
                 return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
-                    (e.name.toLowerCase().includes('wrist curl') && !e.name.toLowerCase().includes('reverse')) ||
+                    (e.name.toLowerCase().includes('wrist curl') && 
+                    !e.name.toLowerCase().includes('reverse')) ||
                     e.name.toLowerCase().includes('palms up') ||
                     e.name.toLowerCase().includes('finger curl') ||
                     e.name.toLowerCase().includes('wrist flexion')
                 );
             }
-            if (muscleHead == 'pronators') {
+            if (muscleHead == 'pronator') {
                 return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
                     e.name.toLowerCase().includes('pronation') ||
                     e.name.toLowerCase().includes('neutral wrist curl') ||
@@ -673,6 +690,6 @@ function renderExercises (){
     })
 
 }
-
+dropdownExercises ();
 
 

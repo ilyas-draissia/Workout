@@ -250,7 +250,7 @@ body{
     max-width: fit-content;
     display: initial;
 }
-.card__button.selected .icon{
+.card__button.selected path{
     fill: var(--primary);
 }
 .program__buttons{
@@ -347,6 +347,9 @@ body{
 }
 .dropdown__element{
     padding: .3rem .5rem;
+}
+.dropdown__element:hover{
+    background-color:var(--bg-dark) ;
 }
 .dropdown__element:not(:last-child){
     border-bottom: .5px  solid var(--border);
