@@ -28,11 +28,16 @@ const exercisesNumber = document.querySelector('.exercises__number');
 const BASE_URL = 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
 const endpoint = `${BASE_URL}/api/en/exercises.json`; 
 const savedExercises = document.querySelector('.dropdown');
+const chosenExercise = document.querySelector('.exercise__choice--name');
+const chosenExerciseWeight = document.querySelector('.choice__weight--number');
+const chosenExerciseSets = document.querySelector('.exercise__info--sets');
+const chosenExerciseReps = document.querySelector('.exercise__info--reps');
 let muscleName = null; 
 let muscleHead = null;
 let exerciseType = null;
 let exerciseList = [];
 let savedExerciseList = [];
+let n = 0;
 
 async function fetchGymExercises() {
   try {
@@ -42,7 +47,6 @@ async function fetchGymExercises() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const exercises = await response.json();
-    // console.log('Successfully fetched exercises:', exercises.exercises);
     exerciseList = exercises.exercises;
   } catch (error) {
     console.error('Failed to load database resource:', error);
@@ -53,7 +57,6 @@ async function fetchGymExercises() {
 fetchGymExercises();
 
 //dark theme  
-
 themeBtn.addEventListener('click',(e)=>{
     e.preventDefault();
     bodyDark.classList.toggle('dark');
@@ -80,8 +83,11 @@ reverseBtn.addEventListener("click",(e)=>{
 // search button on the program section
 searchBtn.addEventListener("click",(e)=>{
     e.preventDefault();
+    const icon = e.target.closest('.icon');
+    if(icon){
     searchBtn.classList.toggle('selected');
     bookmarkBtn.classList.remove('selected');
+    }
 });
 
 //program type bar
@@ -95,18 +101,37 @@ types.forEach((type)=>{
         if(type.classList.contains('program__type--hyp')){
             reps.value = 12;
             sets.value = 4;
+            chosenExerciseReps.textContent = 12;
+            chosenExerciseSets.textContent = 4;
+            (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
         }
         if(type.classList.contains('program__type--str')){
             reps.value = 3;
             sets.value = 2;
+            chosenExerciseReps.textContent = 3;
+            chosenExerciseSets.textContent = 2;
+            (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
         }
         if(type.classList.contains('program__type--end')){
             reps.value = 20;
             sets.value = 6;
+            chosenExerciseReps.textContent = 20;
+            chosenExerciseSets.textContent = 6;
+            (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
         }
     })
 })
-
+function exerciseInfo (){
+    weight.addEventListener('input',e=>{
+        chosenExerciseWeight.textContent = e.target.value;
+    });
+    sets.addEventListener('input',e=>{
+        chosenExerciseSets.textContent = e.target.value;
+    });
+    reps.addEventListener('input',e=>{
+        chosenExerciseReps.textContent = e.target.value;
+    });
+}
 //program weight unit
 units.forEach((unit)=>{
     unit.addEventListener('click',(e)=>{
@@ -124,9 +149,11 @@ plus.forEach((item)=>{
         e.preventDefault();
         if(item.classList.contains('plus--rep') && Number(reps.value) < 100){
             reps.value = Number(reps.value) + 1;
+        reps.dispatchEvent(new Event('input', {bubbles: true}));
         }
         if(item.classList.contains('plus--set') && Number(sets.value) < 100){
             sets.value = Number(sets.value) + 1;
+        sets.dispatchEvent(new Event('input', {bubbles: true}));
         }
         if(item.classList.contains('plus--weight') && Number(weight.value) < 1000){
             if(document.querySelector('.program__unit--kg').classList.contains('selected')){
@@ -134,6 +161,7 @@ plus.forEach((item)=>{
             }else{
                 weight.value = Number(weight.value) + 1.5;
             }
+            weight.dispatchEvent(new Event('input', {bubbles: true}));
         }
     })
 })
@@ -142,9 +170,11 @@ minus.forEach((item)=>{
         e.preventDefault();
         if(item.classList.contains('minus--rep') && Number(reps.value) > 1){
             reps.value = Number(reps.value) - 1;
+        reps.dispatchEvent(new Event('input', {bubbles: true}));
         }
         if(item.classList.contains('minus--set') && Number(sets.value) > 1){
             sets.value = Number(sets.value) - 1;
+        sets.dispatchEvent(new Event('input', {bubbles: true}));
         }
         if(item.classList.contains('minus--weight') && Number(weight.value) > 1){
             if(document.querySelector('.program__unit--kg').classList.contains('selected')){
@@ -152,6 +182,7 @@ minus.forEach((item)=>{
             }else{
                 weight.value = Number(weight.value) - 1.5;
             }
+            weight.dispatchEvent(new Event('input', {bubbles: true}));
         }
     })
 })
@@ -199,7 +230,6 @@ muscles.forEach(muscle =>{
     muscle.addEventListener('click',(e)=>{
         e.preventDefault();
         let n = 0;
-        let N = 0;
         muscles.forEach(m=>{
             m.classList.remove('selected');
         })
@@ -340,26 +370,51 @@ exerciseHeads.addEventListener('click',(e)=>{
 })
 bookmarkBtn.addEventListener('click',(e)=>{
     e.preventDefault();
+    const icon = e.target.closest('.icon');
+    if(icon){
     bookmarkBtn.classList.toggle('selected');
+    searchBtn.classList.remove('selected');
+    }
 })
+function customiseDropdownElement (){
+    savedExercises.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const item = e.target.closest('.dropdown__element');
+        if (!item) return;
+        const id = item.dataset.id;
+        const exercise = savedExerciseList.find(ex => ex.id === id);
+        chosenExercise.textContent = exercise.name;
+    })
+}
+function renderDropdown(){
+    savedExercises.innerHTML = savedExerciseList
+        .map((item, index) => 
+            `<p class="dropdown__element" data-id="${item.id}">${index + 1} - ${item.name}</p>`
+        ).join('');
+}
 function dropdownExercises (){
     exercisesContainer.addEventListener('click',(e)=>{
         e.preventDefault();
         const bookmark = e.target.closest('.card__button--bookmark');
+        if(!bookmark){
+            return;
+        }
         const isAlreadySelected = bookmark.classList.contains('selected');
         const card = e.target.closest('.list__card');
         const name = card.querySelector('.exercise__name').textContent;
         if(!isAlreadySelected){
+            const id = crypto.randomUUID();
             bookmark.classList.add('selected');
-            savedExerciseList += name;
-            savedExercises.innerHTML += `
-                <p class="dropdown__element">${name}</p>
-            `;
+            bookmark.dataset.savedId = id;
+            savedExerciseList.push({id,name});
+            savedExercises.insertAdjacentHTML('beforeend',`<p class="dropdown__element" data-id="${id}">${name}</p>`);
         }else{
+            const id = bookmark.dataset.savedId;
             bookmark.classList.remove('selected');
-            // savedExerciseList = [];
+            savedExerciseList = savedExerciseList.filter(item => item.id !== id);
+            savedExercises.querySelector(`[data-id="${id}"]`)?.remove();
         }
-
+        renderDropdown();
     })
 }
 
@@ -690,6 +745,6 @@ function renderExercises (){
     })
 
 }
-dropdownExercises ();
-
-
+dropdownExercises();
+customiseDropdownElement();
+exerciseInfo();
