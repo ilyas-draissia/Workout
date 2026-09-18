@@ -32,6 +32,9 @@ const chosenExercise = document.querySelector('.exercise__choice--name');
 const chosenExerciseWeight = document.querySelector('.choice__weight--number');
 const chosenExerciseSets = document.querySelector('.exercise__info--sets');
 const chosenExerciseReps = document.querySelector('.exercise__info--reps');
+const searchBar = document.querySelector('.search');
+const searchBarContainer = document.querySelector('.search__bar');
+const searchFilter = document.querySelector('.search__filter');
 let muscleName = null; 
 let muscleHead = null;
 let exerciseType = null;
@@ -55,7 +58,6 @@ async function fetchGymExercises() {
 }
 
 fetchGymExercises();
-
 //dark theme  
 themeBtn.addEventListener('click',(e)=>{
     e.preventDefault();
@@ -79,13 +81,47 @@ reverseBtn.addEventListener("click",(e)=>{
     nmbr.textContent = '';
     renderExercises();
 });
-
+function bookmarkElementsSelect (){
+    savedExercises.addEventListener('click',(e)=>{
+        const element = e.target.closest('.dropdown__element');
+        if(!element) return;
+        const txt = element.textContent; 
+        chosenExercise.textContent = txt.split('-')[1];
+        bookmarkBtn.classList.remove('selected');
+    })
+}
+function searchBarValuesSelect (){
+    searchFilter.addEventListener('click',(e)=>{
+        const item = e.target.closest('.filter__item');
+        if(!item) return;
+        chosenExercise.textContent = item.textContent;
+        searchBtn.classList.remove('selected');
+        searchBarContainer.classList.remove('selected');
+        searchBar.value = '';
+        searchFilter.innerHTML = '';
+        searchBar.classList.remove('focused');
+    })  
+}
+function searchBarValues (){
+    searchBar.addEventListener('input',()=>{
+        if(!searchBar.value){
+            searchBar.classList.remove('focused');
+            searchFilter.innerHTML = '';
+        }else{
+            searchBar.classList.add('focused');
+            const match = exerciseList.filter(ex => ex.name.toLowerCase().includes(searchBar.value.toLowerCase()));
+            searchFilter.innerHTML = match.map(ex =>`<li class="filter__item">${ex.name}</li>`)
+            .join('');
+        }
+    })
+}
 // search button on the program section
 searchBtn.addEventListener("click",(e)=>{
     e.preventDefault();
     const icon = e.target.closest('.icon');
     if(icon){
     searchBtn.classList.toggle('selected');
+    searchBarContainer.classList.toggle('selected');
     bookmarkBtn.classList.remove('selected');
     }
 });
@@ -230,128 +266,124 @@ muscles.forEach(muscle =>{
     muscle.addEventListener('click',(e)=>{
         e.preventDefault();
         let n = 0;
-        muscles.forEach(m=>{
-            m.classList.remove('selected');
-        })
-        if(muscle.classList.contains("forearm--back")){           
-            muscle.classList.toggle('selected');
+        const isAlreadySelected = muscle.classList.contains('selected');
+        muscles.forEach(m => m.classList.remove('selected'));
+        if(!isAlreadySelected){
+            muscle.classList.add('selected');
+            if(muscle.classList.contains("forearm--back")){           
             exerciseName.innerText ='Forearm';
             exerciseHeads.innerHTML = 
             `<button class="head head-${n+=1} brach">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
             nmbr.textContent = `(${n})`;
             muscleName ='forearms' ;
-        }
-        if(muscle.classList.contains("muscle__legs--back")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Legs';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} medius">medius</button><button class="head head-${n+=1} maximus">maximus</button>
-            <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
-            <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
-            <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='legs';
-        }
-        if(muscle.classList.contains("triceps--back")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Triceps';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='triceps'; ; 
-        }
-        if(muscle.classList.contains("shoulder--back")){           
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Shoulder';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='Shoulders' ;  
-        }
-        if(muscle.classList.contains("muscle__back")){           
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Back';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} traps">traps</button><button class="head head-${n+=1} terres">terres major</button><button class="head head-${n+=1} lats">lats</button>
-            <button class="head head-${n+=1} erector">erector</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='back';
-        }
+            }
+            if(muscle.classList.contains("muscle__legs--back")){
+                exerciseName.innerText ='Legs';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} medius">medius</button><button class="head head-${n+=1} maximus">maximus</button>
+                <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
+                <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
+                <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='legs';
+            }
+            if(muscle.classList.contains("triceps--back")){
+                exerciseName.innerText ='Triceps';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='triceps'; ; 
+            }
+            if(muscle.classList.contains("shoulder--back")){           
+                exerciseName.innerText ='Shoulder';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='Shoulders' ;  
+            }
+            if(muscle.classList.contains("muscle__back")){           
+                exerciseName.innerText ='Back';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} traps">traps</button><button class="head head-${n+=1} terres">terres major</button><button class="head head-${n+=1} lats">lats</button>
+                <button class="head head-${n+=1} erector">erector</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='back';
+            }
 
-        if(muscle.classList.contains("chest")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Chest';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} upper">upper</button><button class="head head-${n+=1} middle">middle</button><button class="head head-${n+=1} lower">lower</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='chest';
-        }
-        if(muscle.classList.contains("neck")){           
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Neck';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} neck">neck</button><button class="head head-${n+=1} stern">stern</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='neck';
-        }
-        if(muscle.classList.contains("traps--front")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Traps';
-            nmbr.textContent = `(1)`;
-            muscleName ='traps';
-        }
-        if(muscle.classList.contains("shoulder--front")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='shoulder';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='shoulders';
-        }
-        if(muscle.classList.contains("core")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Core';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} rectusabs">rectus abs</button><button class="head head-${n+=1} external">external obliques</button><button class="head head-${n+=1} internal">internal obliques</button><button class="head head-${n+=1} transabs">transverse abs</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='core';
-        }
-        if(muscle.classList.contains("forearm--front")){           
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Forearms';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} brac">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='forearms';
-        }
-        if(muscle.classList.contains("muscle__legs--front")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Legs';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} medius">medius</button><button class="head head-${n+=1} maximus">maximus</button>
-            <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
-            <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
-            <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='legs';
-        }
-        if(muscle.classList.contains("triceps--front")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Triceps';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName ='triceps'; 
-        }
-        if(muscle.classList.contains("biceps")){
-            muscle.classList.toggle('selected');
-            exerciseName.innerText ='Biceps';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} shorth">short head</button>`;
-            nmbr.textContent = `(${n})`;
-            muscleName = exerciseName.innerText.toLowerCase();
-        }
-        renderExercises ();
+            if(muscle.classList.contains("chest")){
+                exerciseName.innerText ='Chest';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} upper">upper</button><button class="head head-${n+=1} middle">middle</button><button class="head head-${n+=1} lower">lower</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='chest';
+            }
+            if(muscle.classList.contains("neck")){           
+                exerciseName.innerText ='Neck';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} neck">neck</button><button class="head head-${n+=1} stern">stern</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='neck';
+            }
+            if(muscle.classList.contains("traps--front")){
+                exerciseName.innerText ='Traps';
+                nmbr.textContent = `(1)`;
+                muscleName ='traps';
+            }
+            if(muscle.classList.contains("shoulder--front")){
+                exerciseName.innerText ='shoulder';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='shoulders';
+            }
+            if(muscle.classList.contains("core")){
+                exerciseName.innerText ='Core';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} rectusabs">rectus abs</button><button class="head head-${n+=1} external">external obliques</button><button class="head head-${n+=1} internal">internal obliques</button><button class="head head-${n+=1} transabs">transverse abs</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='core';
+            }
+            if(muscle.classList.contains("forearm--front")){           
+                exerciseName.innerText ='Forearms';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} brac">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='forearms';
+            }
+            if(muscle.classList.contains("muscle__legs--front")){
+                exerciseName.innerText ='Legs';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} medius">medius</button><button class="head head-${n+=1} maximus">maximus</button>
+                <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
+                <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
+                <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='legs';
+            }
+            if(muscle.classList.contains("triceps--front")){
+                exerciseName.innerText ='Triceps';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName ='triceps'; 
+            }
+            if(muscle.classList.contains("biceps")){
+                exerciseName.innerText ='Biceps';
+                exerciseHeads.innerHTML = 
+                `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} shorth">short head</button>`;
+                nmbr.textContent = `(${n})`;
+                muscleName = exerciseName.innerText.toLowerCase();
+            }
+            renderExercises ();
+        }else{
+                exerciseName.innerText = 'Muscle';
+                exerciseHeads.innerHTML = '';
+                nmbr.textContent = '';
+                muscleName = null;
+                muscleHead = null;
+                exercisesContainer.innerHTML = "";
+                exercisesNumber.innerHTML = "";
+            }
 })
 })
 exerciseHeads.addEventListener('click',(e)=>{
@@ -374,6 +406,7 @@ bookmarkBtn.addEventListener('click',(e)=>{
     if(icon){
     bookmarkBtn.classList.toggle('selected');
     searchBtn.classList.remove('selected');
+    searchBarContainer.classList.remove('selected');
     }
 })
 function customiseDropdownElement (){
@@ -417,7 +450,6 @@ function dropdownExercises (){
         renderDropdown();
     })
 }
-
 function renderExercises (){
     exercisesContainer.innerHTML = "";
     let filtered ;
@@ -745,6 +777,10 @@ function renderExercises (){
     })
 
 }
+searchBarValuesSelect();
+searchBarValues ();
 dropdownExercises();
 customiseDropdownElement();
 exerciseInfo();
+bookmarkElementsSelect ();
+
