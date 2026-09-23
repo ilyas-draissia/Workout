@@ -404,9 +404,8 @@ body{
 .program__choice{
     display: flex;
     flex-direction: column;
-    margin-inline: .5rem;
     gap: .5rem;
-    /* margin-top: 1rem; */
+    margin: 1rem .5rem;
 }
 .choice__exercise{
     display: flex;
@@ -571,6 +570,7 @@ body{
     font-weight: 600;
     position: relative;
     padding-block: .3rem;
+    max-height: 3rem;
 }
 .table__headline::after {
     content: '';
@@ -618,6 +618,7 @@ body{
     justify-content: space-between;
     align-items: center;
     margin-inline: 1rem;
+    margin-top: auto;
 }
 .finish__download{
     padding: .5rem 1rem;
@@ -631,23 +632,7 @@ body{
     /* justify-content: space-between; */
     padding-bottom: 1rem;
     gap: 1rem;
-}
-.muted{
-
-}
-.hero__program{
-    container-name: program-container;
-    container-type: inline-size;
-}
-/* @container program-container (width > 537px) {
-    .program__form > div{
-        flex-wrap: nowrap;
-    }
-    .reps,.sets,.weight{
-        margin-inline: auto;
-    }
-} */
-      
+} 
 html::-webkit-scrollbar-track {
     border-radius: 8px;
 }
@@ -720,8 +705,8 @@ html::-webkit-scrollbar-button {
         height: 100%;
     }
     .visual__table {
-        flex: 1 0 130px;
-        overflow-y: scroll;
+        flex: 1 0 150px;
+        overflow-y: auto;
     }
     .program__choice{
         flex-direction: row;

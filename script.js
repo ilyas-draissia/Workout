@@ -35,11 +35,15 @@ const chosenExerciseReps = document.querySelector('.exercise__info--reps');
 const searchBar = document.querySelector('.search');
 const searchBarContainer = document.querySelector('.search__bar');
 const searchFilter = document.querySelector('.search__filter');
+const addBtn = document.querySelector('.edit__add');
+const visualTable = document.querySelector('.visual__table');
+const programCounter = document.querySelector('.finish__text--counter');
 let muscleName = null; 
 let muscleHead = null;
 let exerciseType = null;
 let exerciseList = [];
 let savedExerciseList = [];
+let visualExercises = [];
 let n = 0;
 
 async function fetchGymExercises() {
@@ -777,6 +781,99 @@ function renderExercises (){
     })
 
 }
+function thisis (name){
+    visualExercises.findLast(el =>{
+        if( el.name == name){
+        const exercise = document.createElement('div');
+        exercise.className = `table__choice ${visualExercises.indexOf(el) + 1}`;
+
+        const choiceNumber = document.createElement('p');
+        choiceNumber.className = 'choice__number';
+        choiceNumber.textContent = visualExercises.indexOf(el) + 1;
+
+        const choiceContent = document.createElement('div');
+        choiceContent.className = 'choice__content';
+
+        const contentName = document.createElement('p');
+        contentName.className = 'content__name';
+        contentName.textContent = el.name;
+
+        const contentWeight = document.createElement('div');
+        contentWeight.className = 'content__weight';
+
+        const contentWeightN = document.createElement('p');
+        contentWeightN.className = 'content__weight--number';
+        contentWeightN.textContent = el.weights;
+
+        const contentWeightT = document.createElement('p');
+        contentWeightT.className = 'content__weight--type';
+        contentWeightT.textContent = el.units; 
+
+        const contentSets = document.createElement('p');
+        contentSets.className = 'content__sets';
+        contentSets.textContent = el.set;
+
+        const contentReps = document.createElement('p');
+        contentReps.className = 'content__reps';
+        contentReps.textContent = el.rep;
+
+        const contentDelete = document.createElement('button');
+        contentDelete.className = 'content__delete';
+
+        const svg = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                        <path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z"/>
+                    </svg>`;
+
+        exercise.append(choiceNumber,choiceContent);
+        choiceContent.append(contentName,contentWeight,contentSets,contentReps,contentDelete);
+        contentDelete.innerHTML = svg;
+        contentWeight.append(contentWeightN,contentWeightT);
+
+        visualTable.insertAdjacentElement("beforeend",exercise);}}
+    )
+}
+addBtn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    const name = chosenExercise.textContent;
+    const weights = chosenExerciseWeight.textContent;
+    const set = chosenExerciseSets.textContent;
+    const rep = chosenExerciseReps.textContent;
+    let units ; 
+    if(document.querySelector('.program__unit--kg').classList.contains('selected')){
+        units = 'Kg';
+    }else{
+        units = 'Lb';
+    }
+    const emptyE = chosenExercise.textContent == "------";
+    const emptyW = chosenExerciseWeight.textContent == "-";
+    const emptyS = chosenExerciseSets.textContent == "-";
+    const emptyR = chosenExerciseReps.textContent == "-";
+    if(!emptyE && !emptyR && !emptyS && !emptyW){
+        visualExercises.push({name,weights,units,rep,set});
+        thisis(name);
+        chosenExercise.textContent = "------";
+        chosenExerciseWeight.textContent = "-";
+        chosenExerciseSets.textContent = "-";
+        chosenExerciseReps.textContent = "-";
+        weight.value = '0';
+    }else{
+        return;
+    }
+    programCounter();
+})
+visualTable.addEventListener('click',(e)=>{
+    const deleteBtn = e.target.closest('.content__delete');
+    const content = deleteBtn.closest('.choice__content');
+    const choice = deleteBtn.closest('.table__choice');
+    const elementName = content.querySelector('.content__name');
+    if(deleteBtn){
+        visualExercises.pop(name == elementName);
+        visualTable.querySelector(`.table__choice.${CSS.escape(choice.classList[1])}`)?.remove();
+        console.log(visualExercises);
+        programCounter();
+    }
+})
+
 searchBarValuesSelect();
 searchBarValues ();
 dropdownExercises();
