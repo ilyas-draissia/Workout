@@ -38,6 +38,9 @@ const searchFilter = document.querySelector('.search__filter');
 const addBtn = document.querySelector('.edit__add');
 const visualTable = document.querySelector('.visual__table');
 const programCounter = document.querySelector('.finish__text--counter');
+const finishDownloadBtn = document.querySelector('.finish__download');
+const nameProgram = document.querySelector('.edit__name');
+const tableLogo = document.querySelector('.table__logo');
 let muscleName = null; 
 let muscleHead = null;
 let exerciseType = null;
@@ -181,6 +184,7 @@ units.forEach((unit)=>{
         })
         unit.classList.toggle('selected');
         weight.value = 0;
+        chosenExerciseWeight.innerHTML = '-'
     })
 })
 
@@ -242,7 +246,6 @@ typesBtn.forEach((child) => {
     child.addEventListener('click', (e) => {
         e.preventDefault();
         const isAlreadySelected = child.classList.contains('selected');
-        typesBtn.forEach(btn => btn.classList.remove('selected'));
         if (!isAlreadySelected) {
             child.classList.add('selected');
             exerciseType = child.classList[1].slice(16);
@@ -781,15 +784,17 @@ function renderExercises (){
     })
 
 }
-function thisis (name){
-    visualExercises.findLast(el =>{
-        if( el.name == name){
+function renderVisualTable (){
+    visualTable.querySelectorAll(".table__choice").forEach(row => row.remove());
+    visualExercises.forEach((el,index) =>{
         const exercise = document.createElement('div');
-        exercise.className = `table__choice ${visualExercises.indexOf(el) + 1}`;
+        exercise.className = "table__choice ";
+        const idThis = crypto.randomUUID();
+        exercise.dataset.savedId = idThis ;
 
         const choiceNumber = document.createElement('p');
         choiceNumber.className = 'choice__number';
-        choiceNumber.textContent = visualExercises.indexOf(el) + 1;
+        choiceNumber.textContent = index + 1;
 
         const choiceContent = document.createElement('div');
         choiceContent.className = 'choice__content';
@@ -819,6 +824,8 @@ function thisis (name){
 
         const contentDelete = document.createElement('button');
         contentDelete.className = 'content__delete';
+        contentDelete.dataset.savedId = idThis;
+        contentDelete.dataset.index = index;
 
         const svg = `<svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                         <path d="M183.1 137.4C170.6 124.9 150.3 124.9 137.8 137.4C125.3 149.9 125.3 170.2 137.8 182.7L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7L320.5 365.3L457.9 502.6C470.4 515.1 490.7 515.1 503.2 502.6C515.7 490.1 515.7 469.8 503.2 457.3L365.8 320L503.1 182.6C515.6 170.1 515.6 149.8 503.1 137.3C490.6 124.8 470.3 124.8 457.8 137.3L320.5 274.7L183.1 137.4z"/>
@@ -829,7 +836,13 @@ function thisis (name){
         contentDelete.innerHTML = svg;
         contentWeight.append(contentWeightN,contentWeightT);
 
-        visualTable.insertAdjacentElement("beforeend",exercise);}}
+        visualTable.appendChild(exercise);
+        if(visualExercises.length > 0){
+            programCounter.innerText = '1';
+        }else{
+            programCounter.innerText = '0';
+        }
+    }
     )
 }
 addBtn.addEventListener('click',(e)=>{
@@ -848,9 +861,9 @@ addBtn.addEventListener('click',(e)=>{
     const emptyW = chosenExerciseWeight.textContent == "-";
     const emptyS = chosenExerciseSets.textContent == "-";
     const emptyR = chosenExerciseReps.textContent == "-";
-    if(!emptyE && !emptyR && !emptyS && !emptyW){
+    if(!emptyE && !emptyR && !emptyS && (!emptyW || !emptyW === 0)){
         visualExercises.push({name,weights,units,rep,set});
-        thisis(name);
+        renderVisualTable();
         chosenExercise.textContent = "------";
         chosenExerciseWeight.textContent = "-";
         chosenExerciseSets.textContent = "-";
@@ -859,21 +872,49 @@ addBtn.addEventListener('click',(e)=>{
     }else{
         return;
     }
-    programCounter();
 })
 visualTable.addEventListener('click',(e)=>{
     const deleteBtn = e.target.closest('.content__delete');
-    const content = deleteBtn.closest('.choice__content');
-    const choice = deleteBtn.closest('.table__choice');
-    const elementName = content.querySelector('.content__name');
-    if(deleteBtn){
-        visualExercises.pop(name == elementName);
-        visualTable.querySelector(`.table__choice.${CSS.escape(choice.classList[1])}`)?.remove();
-        console.log(visualExercises);
-        programCounter();
+    if(!deleteBtn){
+        return;
     }
+    const index = Number(deleteBtn.dataset.index);
+    visualExercises.splice(index,1);
+    renderVisualTable();
 })
 
+finishDownloadBtn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    if(visualExercises.length > 2){
+        html2canvas(visualTable,{
+            onclone:(con)=>{
+                const workoutname = con.querySelector('.table__name');
+                const logo = con.querySelector('.table__logo');
+                logo.style.zIndex = '1';
+                if(nameProgram.value){
+                    workoutname.style.display = 'inline-block';
+                    workoutname.innerHTML = `Program : <p class="table__name--content">${nameProgram.value}</p>` ;
+                }
+                const deleteBtns = con.querySelectorAll('.content__delete');
+                deleteBtns.forEach(d =>d.remove());
+                const workoutTable = con.querySelector('.visual__table');
+                workoutTable.style.gridTemplateColumns = '1.5rem 2fr 1.2fr 0.6fr 0.6fr';
+                
+            }
+        }).then(canvas =>{
+        const imageUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = `workout-plan-${nameProgram.value.replace(/\s/g, '-').toLowerCase()}.png`;
+        link.href = imageUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        visualExercises = [];
+        visualTable.querySelectorAll(".table__choice").forEach(row => row.remove());
+        nameProgram.value = '';
+    })
+    }
+})
 searchBarValuesSelect();
 searchBarValues ();
 dropdownExercises();

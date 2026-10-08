@@ -1,0 +1,5 @@
+/data.json
+git rm --cached data.json
+/info.md
+git rm --cached info.md
+
