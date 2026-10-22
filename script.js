@@ -1,6 +1,4 @@
 const typesBtn = document.querySelectorAll('.exercise__type');
-const headBtn = document.querySelectorAll('.head');
-const bookmark = document.querySelectorAll('.card__button');
 const units = document.querySelectorAll('.program__unit');
 const types = document.querySelectorAll('.program__type');
 const reps = document.querySelector('#reps');
@@ -11,14 +9,8 @@ const searchBtn = document.querySelector('.button__circle--search');
 const bookmarkBtn = document.querySelector('.button__circle--bookmark');
 const minus = document.querySelectorAll('.minus');
 const plus = document.querySelectorAll('.plus');
-const typeStr = document.querySelector('.program__type--str');
-const typeHyp = document.querySelector('.program__type--hyp');
-const typeEnd = document.querySelector('.program__type--end');
-const programBar = document.querySelector(".program__types");
 const themeBtn = document.querySelector('.button__circle--theme')
 const bodyDark = document.querySelector('body');
-const calenderBtn = document.querySelectorAll(".calender__btn");
-const typesBtnDayWeek = document.querySelectorAll('.type__btn');
 const muscles = document.querySelectorAll('.muscle');
 const exerciseHeads = document.querySelector('.exercise__heads');
 const nmbr = document.querySelector('.number--head');
@@ -37,10 +29,13 @@ const searchBarContainer = document.querySelector('.search__bar');
 const searchFilter = document.querySelector('.search__filter');
 const addBtn = document.querySelector('.edit__add');
 const visualTable = document.querySelector('.visual__table');
-const programCounter = document.querySelector('.finish__text--counter');
+const programStatus = document.querySelector('.finish__text');
 const finishDownloadBtn = document.querySelector('.finish__download');
 const nameProgram = document.querySelector('.edit__name');
 const tableLogo = document.querySelector('.table__logo');
+const dialog = document.querySelector('.dialog__pop');
+const dialogClose = document.querySelector('.dialog__close');
+
 let muscleName = null; 
 let muscleHead = null;
 let exerciseType = null;
@@ -49,6 +44,7 @@ let savedExerciseList = [];
 let visualExercises = [];
 let n = 0;
 
+//data fetching from api
 async function fetchGymExercises() {
   try {
     const response = await fetch(endpoint);
@@ -63,8 +59,8 @@ async function fetchGymExercises() {
   }
     
 }
-
 fetchGymExercises();
+
 //dark theme  
 themeBtn.addEventListener('click',(e)=>{
     e.preventDefault();
@@ -88,27 +84,37 @@ reverseBtn.addEventListener("click",(e)=>{
     nmbr.textContent = '';
     renderExercises();
 });
+
+//select bookmark elements 
 function bookmarkElementsSelect (){
     savedExercises.addEventListener('click',(e)=>{
         const element = e.target.closest('.dropdown__element');
         if(!element) return;
         const txt = element.textContent; 
         chosenExercise.textContent = txt.split('-')[1];
+        document.querySelector('.choice__exercise').style.border = 'solid 2px var(--primary)';
+        document.querySelector('.choice__exercise').style.padding = 'calc(.5rem - 2px)';
         bookmarkBtn.classList.remove('selected');
     })
-}
+};
+
+//select search bar result elements 
 function searchBarValuesSelect (){
     searchFilter.addEventListener('click',(e)=>{
         const item = e.target.closest('.filter__item');
         if(!item) return;
         chosenExercise.textContent = item.textContent;
+        document.querySelector('.choice__exercise').style.border = 'solid 2px var(--primary)';
+        document.querySelector('.choice__exercise').style.padding = 'calc(.5rem - 2px)';        
         searchBtn.classList.remove('selected');
         searchBarContainer.classList.remove('selected');
         searchBar.value = '';
         searchFilter.innerHTML = '';
         searchBar.classList.remove('focused');
     })  
-}
+};
+
+//select bookmark elements 
 function searchBarValues (){
     searchBar.addEventListener('input',()=>{
         if(!searchBar.value){
@@ -121,19 +127,20 @@ function searchBarValues (){
             .join('');
         }
     })
-}
+};
+
 // search button on the program section
 searchBtn.addEventListener("click",(e)=>{
     e.preventDefault();
     const icon = e.target.closest('.icon');
     if(icon){
-    searchBtn.classList.toggle('selected');
-    searchBarContainer.classList.toggle('selected');
-    bookmarkBtn.classList.remove('selected');
+        searchBtn.classList.toggle('selected');
+        searchBarContainer.classList.toggle('selected');
+        bookmarkBtn.classList.remove('selected');
     }
 });
 
-//program type bar
+//program type of reps and sets bar
 types.forEach((type)=>{
     type.addEventListener('click',(e)=>{
         e.preventDefault();
@@ -163,19 +170,30 @@ types.forEach((type)=>{
             (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
         }
     })
-})
+});
+
+//enetering the exercise values regarding reps, sets and weight
 function exerciseInfo (){
-    weight.addEventListener('input',e=>{
-        chosenExerciseWeight.textContent = e.target.value;
+    weight.addEventListener('input',()=>{
+        chosenExerciseWeight.textContent = weight.value;
     });
-    sets.addEventListener('input',e=>{
-        chosenExerciseSets.textContent = e.target.value;
+    sets.addEventListener('input',()=>{
+        if(sets.value === "0"){
+        chosenExerciseReps.textContent = '-';
+        }else{
+        chosenExerciseReps.textContent = sets.value;
+        }
     });
-    reps.addEventListener('input',e=>{
-        chosenExerciseReps.textContent = e.target.value;
+    reps.addEventListener('input',()=>{
+        if(reps.value === "0"){
+        chosenExerciseReps.textContent = '-';
+        }else{
+        chosenExerciseReps.textContent = reps.value;
+        }
     });
-}
-//program weight unit
+};
+
+//program weight units bar
 units.forEach((unit)=>{
     unit.addEventListener('click',(e)=>{
         e.preventDefault();
@@ -184,10 +202,11 @@ units.forEach((unit)=>{
         })
         unit.classList.toggle('selected');
         weight.value = 0;
-        chosenExerciseWeight.innerHTML = '-'
+        chosenExerciseWeight.innerHTML = '-';
     })
-})
+});
 
+//plus button for the input
 plus.forEach((item)=>{
     item.addEventListener('click',(e)=>{
         e.preventDefault();
@@ -208,7 +227,9 @@ plus.forEach((item)=>{
             weight.dispatchEvent(new Event('input', {bubbles: true}));
         }
     })
-})
+});
+
+//minus button for the input
 minus.forEach((item)=>{
     item.addEventListener('click',(e)=>{
         e.preventDefault();
@@ -229,46 +250,58 @@ minus.forEach((item)=>{
             weight.dispatchEvent(new Event('input', {bubbles: true}));
         }
     })
-})
+});
 
-typesBtnDayWeek.forEach(btn=>{
-    btn.addEventListener('click',(e)=>{
-    e.preventDefault();
-    typesBtnDayWeek.forEach(b=>{
-        b.classList.remove('selected');
-    });
-    btn.classList.toggle('selected');})
-})
-
-
-
-typesBtn.forEach((child) => {
-    child.addEventListener('click', (e) => {
+//type of exercise
+typesBtn.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
         e.preventDefault();
-        const isAlreadySelected = child.classList.contains('selected');
+        const isAlreadySelected = btn.classList.contains('selected');
+        typesBtn.forEach(b =>{b.classList.remove('selected')});
         if (!isAlreadySelected) {
-            child.classList.add('selected');
-            exerciseType = child.classList[1].slice(16);
+            btn.classList.add('selected');
+            exerciseType = btn.classList[1].slice(16);
         }else{
-        exerciseType = '';
+            exerciseType = '';
         }
         renderExercises ();
     });
 });
 
-const buttonsSelected = (parent)=>{
-    parent.forEach((child)=>{
-        child.classList.remove('selected');
-        child.addEventListener('click',(e)=>{
-            e.preventDefault();
-            child.classList.toggle('selected');
-        })
+//preview display 
+function popupShow (){
+    exercisesContainer.addEventListener('click',(e)=>{
+        e.preventDefault();
+        const play =  e.target.closest('.card__button--play');
+        if(!play){
+            return;
+        }
+        const selected = play.classList.contains('selected');
+        const exName = dialog.querySelector('.exercise__name--play');
+        const exInst = dialog.querySelector('.exercise__instructions--play');
+        if(!selected){
+            play.classList.add('selected');
+            dialog.showModal();
+            const img = dialog.querySelector('.image__play');
+            img.setAttribute('src',play.dataset.image);
+            exName.innerText = play.dataset.name;
+            exInst.innerText = play.dataset.inst;
+            if(dialog.hasAttribute("open")){
+                dialog.addEventListener('click',(e)=>{
+                if(e.target === dialog){
+                    dialog.close();
+                    play.classList.remove('selected');
+                }
+                })
+                dialogClose.addEventListener('click',(e)=>{
+                e.preventDefault();
+                dialog.close();
+                play.classList.remove('selected')})
+        }}
     })
 };
 
-buttonsSelected(calenderBtn);
-
-
+//muscle heads
 muscles.forEach(muscle =>{
     muscle.addEventListener('click',(e)=>{
         e.preventDefault();
@@ -393,6 +426,8 @@ muscles.forEach(muscle =>{
             }
 })
 })
+
+//select bookmark elements 
 exerciseHeads.addEventListener('click',(e)=>{
     e.preventDefault();
     const btn = e.target.closest('.head');
@@ -406,16 +441,20 @@ exerciseHeads.addEventListener('click',(e)=>{
         muscleHead = '';
     }
     renderExercises();
-})
+});
+
+//bookmark button list 
 bookmarkBtn.addEventListener('click',(e)=>{
     e.preventDefault();
     const icon = e.target.closest('.icon');
-    if(icon){
+    if(icon ){
     bookmarkBtn.classList.toggle('selected');
     searchBtn.classList.remove('selected');
     searchBarContainer.classList.remove('selected');
     }
-})
+});
+
+//customize the chosen exercise 
 function customiseDropdownElement (){
     savedExercises.addEventListener("click",(e)=>{
         e.preventDefault();
@@ -425,13 +464,17 @@ function customiseDropdownElement (){
         const exercise = savedExerciseList.find(ex => ex.id === id);
         chosenExercise.textContent = exercise.name;
     })
-}
+};
+
+//add the element to the dropdown menu 
 function renderDropdown(){
     savedExercises.innerHTML = savedExerciseList
         .map((item, index) => 
             `<p class="dropdown__element" data-id="${item.id}">${index + 1} - ${item.name}</p>`
         ).join('');
-}
+};
+
+//add the element to the array of bookmarked element 
 function dropdownExercises (){
     exercisesContainer.addEventListener('click',(e)=>{
         e.preventDefault();
@@ -456,7 +499,9 @@ function dropdownExercises (){
         }
         renderDropdown();
     })
-}
+};
+
+//dispaly exercise based on the conditions (muscles, type, head)
 function renderExercises (){
     exercisesContainer.innerHTML = "";
     let filtered ;
@@ -479,12 +524,28 @@ function renderExercises (){
     if(muscleHead){
         filtered = filtered.filter((e) =>{
             //chest
-            if(muscleHead == 'upper'){
-                return e.name.toLowerCase().includes('incline');
-            }if(muscleHead == 'lower'){
-                return e.name.toLowerCase().includes('decline');
-            }if(muscleHead == 'middle'){
-                return !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline');
+            if (muscleHead == 'upper') {
+                return e.muscle == 'pectorals' && (
+                    e.name.toLowerCase().includes('incline') ||
+                    e.name.toLowerCase().includes('low fly') ||
+                    e.name.toLowerCase().includes('upper chest')
+                );
+            }
+
+            if (muscleHead == 'middle') {
+                return e.muscle == 'pectorals' && (
+                    e.name.toLowerCase().includes('bench press') && !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline') ||
+                    e.name.toLowerCase().includes('push up') && !e.name.toLowerCase().includes('decline') && !e.name.toLowerCase().includes('incline') ||
+                    e.name.toLowerCase().includes('chest press') && !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline') ||
+                    e.name.toLowerCase().includes('fly') && !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline')
+                );
+            }
+            if (muscleHead == 'lower') {
+                return e.muscle == 'pectorals' && (
+                    e.name.toLowerCase().includes('decline') ||
+                    e.name.toLowerCase().includes('dip') ||
+                    e.name.toLowerCase().includes('pullover')
+                );
             }
             //legs
             if(muscleHead == 'quads'){
@@ -766,24 +827,56 @@ function renderExercises (){
         })     
     }
 
-    exercisesNumber.innerText = `(${filtered.length})`;
+    if(!filtered.length == 0){    
+        exercisesNumber.innerText = `(${filtered.length})`;
+    }else{
+        exercisesNumber.innerText = '';
+    }
     filtered.forEach((ce, index) =>{
         let g = index + 1;
-        exercisesContainer.innerHTML +=
-        `<div class="list__card list__card--n${g}">
-            <div class="card__text">
-                <h2 class="exercise__name">${ce.name}</h2>
-                <p class="exercise__number">${ce.equipment.charAt(0).toUpperCase() + ce.equipment.slice(1)}</p>
-                <p class="exercise__number">(${g}/${filtered.length})</p>
-            </div>
-            <div class="card__buttons">
-                <button class="card__button card__button--bookmark"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg></button>
-                <button class="card__button--play"><svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg></button>
-            </div>
-        </div>`;   
+        const element = document.createElement('div');
+        element.className = `list__card list__card--n${g}`;
+        const firstChild = document.createElement('div');
+        firstChild.className = 'card__text';
+
+        const ht = document.createElement('h2');
+        ht.className = 'exercise__name';
+        ht.innerHTML = `${ce.name}`;
+
+        const pf = document.createElement('p');
+        pf.className = 'exercise__number';
+        pf.innerHTML = `${ce.equipment.charAt(0).toUpperCase() + ce.equipment.slice(1)}`;
+
+        const ps = document.createElement('p');
+        ps.className = 'exercise__detail';
+        ps.innerHTML = `(${g}/${filtered.length})`;
+        firstChild.append(ht,pf,ps);
+
+        const secondChild = document.createElement('div');
+        secondChild.className = 'card__buttons';
+
+        const buttonFirst = document.createElement('button');
+        buttonFirst.className = 'card__button card__button--bookmark';
+        buttonFirst.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg>';
+        const buttonSecond = document.createElement('button');
+        buttonSecond.className = 'card__button--play';
+        buttonSecond.dataset.image = ce.gifUrl;
+        buttonSecond.dataset.name = ce.name;
+        const ggg = ce.instructions;
+        const zzz = ggg.map(i => i.endsWith(',')?i.slice(0,-1):i);
+        const rrr = zzz.map((i,index) => `${index+1}- ${i}`);
+        buttonSecond.dataset.inst = rrr.join('\n');
+        buttonSecond.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="icon " viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg>`;
+
+        secondChild.append(buttonFirst,buttonSecond);
+
+        element.append(firstChild,secondChild);
+        exercisesContainer.insertAdjacentElement('afterbegin',element)
     })
 
-}
+};
+
+//add the exercise to the display table 
 function renderVisualTable (){
     visualTable.querySelectorAll(".table__choice").forEach(row => row.remove());
     visualExercises.forEach((el,index) =>{
@@ -808,11 +901,18 @@ function renderVisualTable (){
 
         const contentWeightN = document.createElement('p');
         contentWeightN.className = 'content__weight--number';
-        contentWeightN.textContent = el.weights;
 
-        const contentWeightT = document.createElement('p');
-        contentWeightT.className = 'content__weight--type';
-        contentWeightT.textContent = el.units; 
+        if(el.weights === '-'){
+            contentWeightN.textContent = 'Body';
+            contentWeight.append(contentWeightN);
+        }else{
+            contentWeightN.textContent = el.weights;
+            const contentWeightT = document.createElement('p');
+            contentWeightT.className = 'content__weight--type';
+            contentWeightT.textContent = el.unit; 
+            contentWeight.append(contentWeightN,contentWeightT);
+        }
+
 
         const contentSets = document.createElement('p');
         contentSets.className = 'content__sets';
@@ -834,45 +934,56 @@ function renderVisualTable (){
         exercise.append(choiceNumber,choiceContent);
         choiceContent.append(contentName,contentWeight,contentSets,contentReps,contentDelete);
         contentDelete.innerHTML = svg;
-        contentWeight.append(contentWeightN,contentWeightT);
 
         visualTable.appendChild(exercise);
         if(visualExercises.length > 0){
-            programCounter.innerText = '1';
-        }else{
-            programCounter.innerText = '0';
+            programStatus.innerText = 'Program developing ';
         }
     }
     )
-}
+};
+
+//the button which adds the selcted and customized exercise to the display table
 addBtn.addEventListener('click',(e)=>{
     e.preventDefault();
     const name = chosenExercise.textContent;
     const weights = chosenExerciseWeight.textContent;
     const set = chosenExerciseSets.textContent;
     const rep = chosenExerciseReps.textContent;
-    let units ; 
+    let unit ; 
     if(document.querySelector('.program__unit--kg').classList.contains('selected')){
-        units = 'Kg';
+        unit = 'Kg';
     }else{
-        units = 'Lb';
+        unit = 'Lb';
     }
     const emptyE = chosenExercise.textContent == "------";
-    const emptyW = chosenExerciseWeight.textContent == "-";
     const emptyS = chosenExerciseSets.textContent == "-";
     const emptyR = chosenExerciseReps.textContent == "-";
-    if(!emptyE && !emptyR && !emptyS && (!emptyW || !emptyW === 0)){
-        visualExercises.push({name,weights,units,rep,set});
+    if(!emptyE && !emptyR && !emptyS){
+        visualExercises.push({name,weights,unit,rep,set});
         renderVisualTable();
         chosenExercise.textContent = "------";
         chosenExerciseWeight.textContent = "-";
         chosenExerciseSets.textContent = "-";
         chosenExerciseReps.textContent = "-";
-        weight.value = '0';
+        weight.value = 0;
+        reps.value = 12;
+        sets.value = 4;
+        document.querySelector('.choice__exercise').style.border = 'none';
     }else{
         return;
     }
-})
+    types.forEach((t)=>{
+        t.classList.remove('selected');
+    })
+    document.querySelector('.program__type--hyp').classList.add('selected');
+    units.forEach((u)=>{
+        u.classList.remove('selected');
+    })
+    document.querySelector('.program__unit--kg').classList.add('selected');
+});
+
+//the delete button from the table
 visualTable.addEventListener('click',(e)=>{
     const deleteBtn = e.target.closest('.content__delete');
     if(!deleteBtn){
@@ -881,25 +992,32 @@ visualTable.addEventListener('click',(e)=>{
     const index = Number(deleteBtn.dataset.index);
     visualExercises.splice(index,1);
     renderVisualTable();
-})
+});
 
+//the download button which generates program canvas
 finishDownloadBtn.addEventListener('click',(e)=>{
     e.preventDefault();
-    if(visualExercises.length > 2){
+    if(visualExercises.length >= 2){
         html2canvas(visualTable,{
+            windowWidth : 768,
             onclone:(con)=>{
-                const workoutname = con.querySelector('.table__name');
+                const workoutName = con.querySelector('.table__name');
                 const logo = con.querySelector('.table__logo');
-                logo.style.zIndex = '1';
-                if(nameProgram.value){
-                    workoutname.style.display = 'inline-block';
-                    workoutname.innerHTML = `Program : <p class="table__name--content">${nameProgram.value}</p>` ;
+                if(!nameProgram.value == ''){
+                    workoutName.style.zIndex = '1';
+                    workoutName.innerText = nameProgram.value ;
+                }else{
+                    workoutName.style.zIndex = '1';
+                    workoutName.innerText = "Workout Program" ;
                 }
                 const deleteBtns = con.querySelectorAll('.content__delete');
                 deleteBtns.forEach(d =>d.remove());
                 const workoutTable = con.querySelector('.visual__table');
                 workoutTable.style.gridTemplateColumns = '1.5rem 2fr 1.2fr 0.6fr 0.6fr';
-                
+                workoutTable.style.borderRadius = '0';
+                logo.style.zIndex = '1';
+                const table = con.querySelector('.visual__table');
+                table.style.overflowY = 'visible';
             }
         }).then(canvas =>{
         const imageUrl = canvas.toDataURL('image/png');
@@ -912,13 +1030,16 @@ finishDownloadBtn.addEventListener('click',(e)=>{
         visualExercises = [];
         visualTable.querySelectorAll(".table__choice").forEach(row => row.remove());
         nameProgram.value = '';
+        programStatus.innerText = 'Program downloaded ✔';
     })
     }
-})
+});
+
+
 searchBarValuesSelect();
 searchBarValues ();
 dropdownExercises();
 customiseDropdownElement();
 exerciseInfo();
 bookmarkElementsSelect ();
-
+popupShow ();
