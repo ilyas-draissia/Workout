@@ -100,9 +100,11 @@
                 <span class="muscle shape chest"></span>
                 <span class="muscle shape core"></span>
                 <span class="muscle shape forearm--front"></span>
-                <span class="muscle shape neck"></span>
+                <span class="muscle muscle__neck">
+                  <span class="shape neck"></span>
+                  <span class="shape traps--front"></span>
+                </span>
                 <span class="muscle shape shoulder--front"></span>
-                <span class="muscle shape traps--front"></span>
                 <span class="muscle shape triceps--front"></span>
             </div>
             <button class="button__circle button__circle--reverse">
@@ -112,16 +114,19 @@
           </div>
           <div class="hero__exercise">
             <h2 class="exercise__muscle">Muscle</h2>
-            <p class="exercise__text">Muscle heads <span class="number--head"></span> :</p>
+            <p class="exercise__text">Muscle heads<span class="number--head"></span>:</p>
             <div class="exercise__heads">
             </div>
-            <p class="exercise__text">Type of exercise :</p>
+            <p class="exercise__text">Exercise type: <span class="type--name selected">(S = Stretch)</span></p>
             <div class="exercise__types">
-              <button class="exercise__type exercise__type--free">F<span class="collapsed-btn">reeweight</span></button>
-              <button class="exercise__type exercise__type--machine">M<span class="collapsed-btn">achine</span></button>
-              <button class="exercise__type exercise__type--body">B<span class="collapsed-btn">odyweight</span></button>
+              <button class="exercise__type exercise__type--free Free-weight">F</button>
+              <button class="exercise__type exercise__type--machine Machine">M</button>
+              <button class="exercise__type exercise__type--body Body-weight">B</button>
+              <button class="exercise__type exercise__type--resistance Resist-band">R</button>
+              <button class="exercise__type exercise__type--stretch Stretch">S</button>
+              <button class="exercise__type exercise__type--cardio Cardio">C</button>
             </div>
-            <p class="exercise__text">Exercises <span class="exercises__number"></span> :</p>
+            <p class="exercise__text">Exercises<span class="exercises__number"></span>:</p>
             <dialog class="dialog__pop">
               <h2 class="exercise__name--play"></h2>
               <img class="image__play">
@@ -140,7 +145,7 @@
             <button class="button__circle button__circle--search">
               <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
               <div class="search__bar">
-                <input type="search" name="" id="" class="search">
+                <input type="search" name="" id="" class="search" placeholder="ex: Bench press">
                 <ul class="search__filter">
                 </ul>
               </div>
@@ -148,7 +153,8 @@
             <button class="button__circle button__circle--bookmark">
               <div class="dropdown">
               </div>
-              <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg>
+              <svg class="icon icon--empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg>
+              <svg class="icon icon--more" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M192 64C156.7 64 128 92.7 128 128L128 544C128 555.5 134.2 566.2 144.2 571.8C154.2 577.4 166.5 577.3 176.4 571.4L320 485.3L463.5 571.4C473.4 577.3 485.7 577.5 495.7 571.8C505.7 566.1 512 555.5 512 544L512 128C512 92.7 483.3 64 448 64L192 64z"/></svg>
             </button>
           </div>
           <div class="program__types">
@@ -196,15 +202,14 @@
                   <p class="exercise__info--reps">-</p>
                 </div>
               </div>
-              <button type="submit" class="edit__add">ADD + </button>
-          </div>
+              <div class="choice__buttons">
+                <button type="submit" class="edit__add">ADD + </button>
+                <button class="edit__play"><svg xmlns="http://www.w3.org/2000/svg" class="icon " viewBox="0 0 640 640"><path d="M187.2 100.9C174.8 94.1 159.8 94.4 147.6 101.6C135.4 108.8 128 121.9 128 136L128 504C128 518.1 135.5 531.2 147.6 538.4C159.7 545.6 174.8 545.9 187.2 539.1L523.2 355.1C536 348.1 544 334.6 544 320C544 305.4 536 291.9 523.2 284.9L187.2 100.9z"/></svg></button>
+              </div>
+              </div>
             <div class="program__visual">
               <div class="visual__edit">
-                  <div class="edit__type">
-                    <div class="type__name">
-                      <input type="search" name="" id="" class="edit__name" placeholder="Program name ex : Upper, Push, Arms">
-                    </div>
-                  </div>
+                <input type="search" name="" id="" class="edit__name" placeholder="Program name ex : Upper, Push, Arms">
               </div>
               <div class="visual__table">
                 <svg class="table__logo"

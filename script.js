@@ -20,7 +20,8 @@ const exercisesNumber = document.querySelector('.exercises__number');
 const BASE_URL = 'https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0';
 const endpoint = `${BASE_URL}/api/en/exercises.json`; 
 const savedExercises = document.querySelector('.dropdown');
-const chosenExercise = document.querySelector('.exercise__choice--name');
+const chosenExercise = document.querySelector('.choice__exercise');
+const chosenExerciseName = document.querySelector('.exercise__choice--name');
 const chosenExerciseWeight = document.querySelector('.choice__weight--number');
 const chosenExerciseSets = document.querySelector('.exercise__info--sets');
 const chosenExerciseReps = document.querySelector('.exercise__info--reps');
@@ -35,6 +36,8 @@ const nameProgram = document.querySelector('.edit__name');
 const tableLogo = document.querySelector('.table__logo');
 const dialog = document.querySelector('.dialog__pop');
 const dialogClose = document.querySelector('.dialog__close');
+const typeName = document.querySelector('.type--name');
+const programBtnPlay = document.querySelector('.edit__play');
 
 let muscleName = null; 
 let muscleHead = null;
@@ -82,6 +85,10 @@ reverseBtn.addEventListener("click",(e)=>{
     exerciseName.innerText ='Muscle';
     exerciseHeads.innerHTML = '';
     nmbr.textContent = '';
+    typeName.textContent = '(S = Stretch)';
+    muscles.forEach(m => m.classList.remove('selected'));
+    typesBtn.forEach(b =>b.classList.remove('selected'));
+    typesBtn.forEach(b =>b.classList.remove('active'));
     renderExercises();
 });
 
@@ -91,10 +98,11 @@ function bookmarkElementsSelect (){
         const element = e.target.closest('.dropdown__element');
         if(!element) return;
         const txt = element.textContent; 
-        chosenExercise.textContent = txt.split('-')[1];
-        document.querySelector('.choice__exercise').style.border = 'solid 2px var(--primary)';
-        document.querySelector('.choice__exercise').style.padding = 'calc(.5rem - 2px)';
+        chosenExerciseName.textContent = txt.split('-')[1];
         bookmarkBtn.classList.remove('selected');
+        chosenExercise.classList.add('selected');
+        addBtn.classList.add('selected');
+        programBtnPlay.classList.add('selected');
     })
 };
 
@@ -103,18 +111,21 @@ function searchBarValuesSelect (){
     searchFilter.addEventListener('click',(e)=>{
         const item = e.target.closest('.filter__item');
         if(!item) return;
-        chosenExercise.textContent = item.textContent;
-        document.querySelector('.choice__exercise').style.border = 'solid 2px var(--primary)';
-        document.querySelector('.choice__exercise').style.padding = 'calc(.5rem - 2px)';        
+        chosenExerciseName.textContent = item.textContent;
+        chosenExerciseName.dataset.image = item.dataset.image;
+        chosenExerciseName.dataset.inst = item.dataset.inst;
         searchBtn.classList.remove('selected');
         searchBarContainer.classList.remove('selected');
         searchBar.value = '';
         searchFilter.innerHTML = '';
         searchBar.classList.remove('focused');
+        chosenExercise.classList.add('selected'); 
+        addBtn.classList.add('selected');
+        programBtnPlay.classList.add('selected');    
     })  
 };
 
-//select bookmark elements 
+//search bar filter elements 
 function searchBarValues (){
     searchBar.addEventListener('input',()=>{
         if(!searchBar.value){
@@ -123,7 +134,7 @@ function searchBarValues (){
         }else{
             searchBar.classList.add('focused');
             const match = exerciseList.filter(ex => ex.name.toLowerCase().includes(searchBar.value.toLowerCase()));
-            searchFilter.innerHTML = match.map(ex =>`<li class="filter__item">${ex.name}</li>`)
+            searchFilter.innerHTML = match.map(ex =>`<li class="filter__item" data-image="${ex.gifUrl}" data-inst="${ex.instructions}">${ex.name}</li>`)
             .join('');
         }
     })
@@ -137,6 +148,8 @@ searchBtn.addEventListener("click",(e)=>{
         searchBtn.classList.toggle('selected');
         searchBarContainer.classList.toggle('selected');
         bookmarkBtn.classList.remove('selected');
+        searchBar.value = '';
+        searchFilter.innerHTML = '';
     }
 });
 
@@ -154,6 +167,8 @@ types.forEach((type)=>{
             chosenExerciseReps.textContent = 12;
             chosenExerciseSets.textContent = 4;
             (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
+            document.querySelector('.input__number--sets').classList.remove('err');
+            document.querySelector('.input__number--reps').classList.remove('err');
         }
         if(type.classList.contains('program__type--str')){
             reps.value = 3;
@@ -161,6 +176,8 @@ types.forEach((type)=>{
             chosenExerciseReps.textContent = 3;
             chosenExerciseSets.textContent = 2;
             (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
+            document.querySelector('.input__number--sets').classList.remove('err');
+            document.querySelector('.input__number--reps').classList.remove('err');
         }
         if(type.classList.contains('program__type--end')){
             reps.value = 20;
@@ -168,27 +185,43 @@ types.forEach((type)=>{
             chosenExerciseReps.textContent = 20;
             chosenExerciseSets.textContent = 6;
             (sets,reps).dispatchEvent(new Event('input', {bubbles: true}));
+            document.querySelector('.input__number--sets').classList.remove('err');
+            document.querySelector('.input__number--reps').classList.remove('err');
         }
+        types.forEach((t)=>{
+            t.classList.remove('mute');
+        })
+        document.querySelector('.minus--rep').classList.remove('selected');
+        document.querySelector('.minus--set').classList.remove('selected');
+        document.querySelector('.plus--rep').classList.remove('selected');
+        document.querySelector('.plus--set').classList.remove('selected');
     })
 });
 
 //enetering the exercise values regarding reps, sets and weight
 function exerciseInfo (){
     weight.addEventListener('input',()=>{
-        chosenExerciseWeight.textContent = weight.value;
+        if(weight.value === "0" || weight.value === ""){
+            chosenExerciseWeight.textContent = '-';
+            weight.value = "0";
+        }else{
+            chosenExerciseWeight.textContent = weight.value;
+        }
     });
     sets.addEventListener('input',()=>{
-        if(sets.value === "0"){
-        chosenExerciseReps.textContent = '-';
+        if(sets.value === "0" || sets.value === "" ){
+            chosenExerciseSets.textContent = '-';
         }else{
-        chosenExerciseReps.textContent = sets.value;
+            chosenExerciseSets.textContent = sets.value;
+            document.querySelector('.input__number--sets').classList.remove('err');
         }
     });
     reps.addEventListener('input',()=>{
-        if(reps.value === "0"){
-        chosenExerciseReps.textContent = '-';
+        if(reps.value === "0" || reps.value === "" ){
+            chosenExerciseReps.textContent = '-';
         }else{
-        chosenExerciseReps.textContent = reps.value;
+            chosenExerciseReps.textContent = reps.value;
+            document.querySelector('.input__number--reps').classList.remove('err');
         }
     });
 };
@@ -210,21 +243,29 @@ units.forEach((unit)=>{
 plus.forEach((item)=>{
     item.addEventListener('click',(e)=>{
         e.preventDefault();
-        if(item.classList.contains('plus--rep') && Number(reps.value) < 100){
+        const itemClass = item.classList; 
+        if(itemClass.contains('plus--rep') && Number(reps.value) < 100){
             reps.value = Number(reps.value) + 1;
-        reps.dispatchEvent(new Event('input', {bubbles: true}));
+            reps.dispatchEvent(new Event('input', {bubbles: true}));
+            reps.focus();
+            document.querySelector('.input__number--reps').classList.remove('err');
+            types.forEach(t => t.classList.add('mute'));
         }
-        if(item.classList.contains('plus--set') && Number(sets.value) < 100){
+        if(itemClass.contains('plus--set') && Number(sets.value) < 100){
             sets.value = Number(sets.value) + 1;
-        sets.dispatchEvent(new Event('input', {bubbles: true}));
+            sets.dispatchEvent(new Event('input', {bubbles: true}));
+            sets.focus();
+            document.querySelector('.input__number--sets').classList.remove('err');
+            types.forEach(t => t.classList.add('mute'));
         }
-        if(item.classList.contains('plus--weight') && Number(weight.value) < 1000){
+        if(itemClass.contains('plus--weight') && Number(weight.value) < 1000){
             if(document.querySelector('.program__unit--kg').classList.contains('selected')){
                 weight.value = Number(weight.value) + 2.5;
             }else{
                 weight.value = Number(weight.value) + 1.5;
             }
             weight.dispatchEvent(new Event('input', {bubbles: true}));
+            weight.focus();
         }
     })
 });
@@ -233,21 +274,31 @@ plus.forEach((item)=>{
 minus.forEach((item)=>{
     item.addEventListener('click',(e)=>{
         e.preventDefault();
-        if(item.classList.contains('minus--rep') && Number(reps.value) > 1){
+        const itemClass = item.classList; 
+        if(itemClass.contains('minus--rep') && Number(reps.value) > 1){
+            if(reps.value == 1){return;}
             reps.value = Number(reps.value) - 1;
-        reps.dispatchEvent(new Event('input', {bubbles: true}));
+            reps.dispatchEvent(new Event('input', {bubbles: true}));
+            reps.focus();
+            document.querySelector('.input__number--sets').classList.remove('err');
+            types.forEach(t => t.classList.add('mute'));
         }
-        if(item.classList.contains('minus--set') && Number(sets.value) > 1){
+        if(itemClass.contains('minus--set') && Number(sets.value) > 1){
+            if(sets.value == 1){return;}
             sets.value = Number(sets.value) - 1;
-        sets.dispatchEvent(new Event('input', {bubbles: true}));
+            sets.dispatchEvent(new Event('input', {bubbles: true}));
+            sets.focus();
+            document.querySelector('.input__number--sets').classList.remove('err');
+            types.forEach(t => t.classList.add('mute'));
         }
-        if(item.classList.contains('minus--weight') && Number(weight.value) > 1){
+        if(itemClass.contains('minus--weight') && Number(weight.value) > 1){
             if(document.querySelector('.program__unit--kg').classList.contains('selected')){
                 weight.value = Number(weight.value) - 2.5;
             }else{
                 weight.value = Number(weight.value) - 1.5;
             }
             weight.dispatchEvent(new Event('input', {bubbles: true}));
+            weight.focus();
         }
     })
 });
@@ -258,15 +309,108 @@ typesBtn.forEach((btn) => {
         e.preventDefault();
         const isAlreadySelected = btn.classList.contains('selected');
         typesBtn.forEach(b =>{b.classList.remove('selected')});
-        if (!isAlreadySelected) {
-            btn.classList.add('selected');
-            exerciseType = btn.classList[1].slice(16);
+        if (document.querySelector('.exercises__number').textContent == ''){
+            return;
         }else{
-            exerciseType = '';
+            if (!isAlreadySelected){
+                btn.classList.add('selected');
+                exerciseType = btn.classList[1].slice(16);
+                typeName.innerText = btn.classList[2];
+                typeName.classList.remove('selected');
+            }else{
+                exerciseType = '';
+                typeName.innerText = '(S = Stretch)';
+                typeName.classList.add('selected');
+            }
+            renderExercises ();
         }
-        renderExercises ();
     });
 });
+
+//input focus
+function focusFunction (){
+    weight.addEventListener('focus',function(e){
+        e.preventDefault();
+        this.classList.toggle('selected');
+        document.querySelector('.minus--weight').classList.toggle('selected');
+        document.querySelector('.plus--weight').classList.toggle('selected');
+        
+    })
+    reps.addEventListener('focus',function(e){
+        e.preventDefault();
+        this.classList.add('selected');
+        document.querySelector('.minus--rep').classList.add('selected');
+        document.querySelector('.plus--rep').classList.add('selected');
+        
+    })
+    sets.addEventListener('focus',function(e){
+        e.preventDefault();
+        this.classList.add('selected');
+        document.querySelector('.minus--set').classList.add('selected');
+        document.querySelector('.plus--set').classList.add('selected');
+        
+    })
+};
+
+//input blur
+function blurFunction (){
+    weight.addEventListener('blur',function(e){
+        e.preventDefault();
+        this.classList.remove('selected');
+        document.querySelector('.minus--weight').classList.remove('selected');
+        document.querySelector('.plus--weight').classList.remove('selected');
+        
+    })
+    reps.addEventListener('blur',function(e){
+        e.preventDefault();
+        this.classList.remove('selected');
+        document.querySelector('.minus--rep').classList.remove('selected');
+        document.querySelector('.plus--rep').classList.remove('selected');
+        
+    })
+    sets.addEventListener('blur',function(e){
+        e.preventDefault();
+        this.classList.add('selected');
+        document.querySelector('.minus--set').classList.remove('selected');
+        document.querySelector('.plus--set').classList.remove('selected');
+        
+    })
+};
+
+//preview display on the program maker
+function popupShowProgram (){
+    programBtnPlay.addEventListener('click',(e)=>{
+        if(chosenExerciseName.textContent == '------'){        
+            return ;
+        }else{
+            e.preventDefault();
+            const exName = dialog.querySelector('.exercise__name--play');
+            const exInst = dialog.querySelector('.exercise__instructions--play');
+            if(!chosenExerciseName.innerText === '------'){
+                return ;
+            }
+            else{
+                dialog.showModal();
+                const img = dialog.querySelector('.image__play');
+                img.setAttribute('src',chosenExerciseName.dataset.image);
+                exName.innerText = chosenExerciseName.textContent;
+                const ggg = chosenExerciseName.dataset.inst.split(/,(?=[A-Z\b])/);
+                exInst.innerText = ggg.map((item, index) => `${index + 1}- ${item.trim()}`).join('\n');
+                if(dialog.hasAttribute("open")){
+                    dialog.addEventListener('click',(e)=>{
+                        if(e.target === dialog){
+                            dialog.close();
+                        }
+                    })
+                    dialogClose.addEventListener('click',(e)=>{
+                        e.preventDefault();
+                        dialog.close();
+                    })
+                }
+            }
+        }
+    })
+};
 
 //preview display 
 function popupShow (){
@@ -310,11 +454,13 @@ muscles.forEach(muscle =>{
         muscles.forEach(m => m.classList.remove('selected'));
         if(!isAlreadySelected){
             muscle.classList.add('selected');
+            exerciseHeads.style.backgroundColor = 'var(--bg-light)';
+            typesBtn.forEach(b =>{b.classList.add('active')});
             if(muscle.classList.contains("forearm--back")){           
             exerciseName.innerText ='Forearm';
             exerciseHeads.innerHTML = 
             `<button class="head head-${n+=1} brach">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
-            nmbr.textContent = `(${n})`;
+            nmbr.textContent = ` (${n})`;
             muscleName ='forearms' ;
             }
             if(muscle.classList.contains("muscle__legs--back")){
@@ -324,21 +470,21 @@ muscles.forEach(muscle =>{
                 <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
                 <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
                 <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='legs';
             }
             if(muscle.classList.contains("triceps--back")){
                 exerciseName.innerText ='Triceps';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='triceps'; ; 
             }
             if(muscle.classList.contains("shoulder--back")){           
                 exerciseName.innerText ='Shoulder';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='Shoulders' ;  
             }
             if(muscle.classList.contains("muscle__back")){           
@@ -346,48 +492,43 @@ muscles.forEach(muscle =>{
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} traps">traps</button><button class="head head-${n+=1} terres">terres major</button><button class="head head-${n+=1} lats">lats</button>
                 <button class="head head-${n+=1} erector">erector</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='back';
             }
 
             if(muscle.classList.contains("chest")){
                 exerciseName.innerText ='Chest';
                 exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} upper">upper</button><button class="head head-${n+=1} middle">middle</button><button class="head head-${n+=1} lower">lower</button>`;
-                nmbr.textContent = `(${n})`;
+                `<button class="head head-${n+=1} serratus-anterior">serratus-anterior</button><button class="head head-${n+=1} upper">upper</button><button class="head head-${n+=1} middle">middle</button><button class="head head-${n+=1} lower">lower</button>`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='chest';
             }
-            if(muscle.classList.contains("neck")){           
+            if(muscle.classList.contains("muscle__neck")){           
                 exerciseName.innerText ='Neck';
                 exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} neck">neck</button><button class="head head-${n+=1} stern">stern</button>`;
-                nmbr.textContent = `(${n})`;
+                `<button class="head head-${n+=1} neck">neck</button>`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='neck';
-            }
-            if(muscle.classList.contains("traps--front")){
-                exerciseName.innerText ='Traps';
-                nmbr.textContent = `(1)`;
-                muscleName ='traps';
             }
             if(muscle.classList.contains("shoulder--front")){
                 exerciseName.innerText ='shoulder';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='shoulders';
             }
             if(muscle.classList.contains("core")){
                 exerciseName.innerText ='Core';
                 exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} rectusabs">rectus abs</button><button class="head head-${n+=1} external">external obliques</button><button class="head head-${n+=1} internal">internal obliques</button><button class="head head-${n+=1} transabs">transverse abs</button>`;
-                nmbr.textContent = `(${n})`;
+                `<button class="head head-${n+=1} rectus">rectus abs</button><button class="head head-${n+=1} external">external obliques</button><button class="head head-${n+=1} internal">internal obliques</button><button class="head head-${n+=1} trans">transverse abs</button>`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='core';
             }
             if(muscle.classList.contains("forearm--front")){           
                 exerciseName.innerText ='Forearms';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} brac">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='forearms';
             }
             if(muscle.classList.contains("muscle__legs--front")){
@@ -397,37 +538,39 @@ muscles.forEach(muscle =>{
                 <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
                 <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
                 <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
-                nmbr.textContent = `(${n})`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='legs';
             }
             if(muscle.classList.contains("triceps--front")){
                 exerciseName.innerText ='Triceps';
                 exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
-                nmbr.textContent = `(${n})`;
+                `<button class="head head-${n+=1} long">long head</button><button class="head head-${n+=1} lateral">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
+                nmbr.textContent = ` (${n})`;
                 muscleName ='triceps'; 
             }
             if(muscle.classList.contains("biceps")){
                 exerciseName.innerText ='Biceps';
                 exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} shorth">short head</button>`;
-                nmbr.textContent = `(${n})`;
-                muscleName = exerciseName.innerText.toLowerCase();
+                `<button class="head head-${n+=1} long">long head</button><button class="head head-${n+=1} short">short head</button>`;
+                nmbr.textContent = ` (${n})`;
+                muscleName = 'biceps';
             }
             renderExercises ();
         }else{
-                exerciseName.innerText = 'Muscle';
-                exerciseHeads.innerHTML = '';
-                nmbr.textContent = '';
-                muscleName = null;
-                muscleHead = null;
-                exercisesContainer.innerHTML = "";
-                exercisesNumber.innerHTML = "";
-            }
+            exerciseName.innerText = 'Muscle';
+            exerciseHeads.innerHTML = '';
+            nmbr.textContent = '';
+            muscleName = null;
+            muscleHead = null;
+            exercisesContainer.innerHTML = "";
+            exercisesNumber.innerHTML = "";
+            typesBtn.forEach(b =>{b.classList.remove('active')});
+            exerciseHeads.style.backgroundColor = 'var(--bg)';
+        }
 })
 })
 
-//select bookmark elements 
+//select a muscle 
 exerciseHeads.addEventListener('click',(e)=>{
     e.preventDefault();
     const btn = e.target.closest('.head');
@@ -447,12 +590,30 @@ exerciseHeads.addEventListener('click',(e)=>{
 bookmarkBtn.addEventListener('click',(e)=>{
     e.preventDefault();
     const icon = e.target.closest('.icon');
-    if(icon ){
-    bookmarkBtn.classList.toggle('selected');
-    searchBtn.classList.remove('selected');
-    searchBarContainer.classList.remove('selected');
+    if(icon && savedExerciseList.length > 0){
+        bookmarkBtn.classList.toggle('selected');
+        searchBtn.classList.remove('selected');
+        searchBarContainer.classList.remove('selected');
+        searchBar.value = '';
+        searchFilter.innerHTML = '';
     }
 });
+
+//bookmark counter icon 
+function bookmarkIconStack (){
+    const secondIcon = document.querySelector('.icon--more');
+    const firstIcon = document.querySelector('.icon--empty');
+    if(savedExerciseList.length > 0){
+        secondIcon.style.display = 'block';
+        firstIcon.style.transform = 'translateX(-1px) translateY(1px)';
+        firstIcon.style.filter = 'drop-shadow(1.5px -1px 0px var(--bg))';
+    }else{
+        secondIcon.style.display = 'none';
+        firstIcon.style.transform = 'translateX(0) translateY(0)';
+        firstIcon.style.filter = 'none';
+        bookmarkBtn.classList.remove('selected');
+    }
+}
 
 //customize the chosen exercise 
 function customiseDropdownElement (){
@@ -462,7 +623,9 @@ function customiseDropdownElement (){
         if (!item) return;
         const id = item.dataset.id;
         const exercise = savedExerciseList.find(ex => ex.id === id);
-        chosenExercise.textContent = exercise.name;
+        chosenExerciseName.textContent = exercise.name;
+        chosenExerciseName.dataset.image = exercise.gif;
+        chosenExerciseName.dataset.inst = exercise.inst;
     })
 };
 
@@ -470,7 +633,7 @@ function customiseDropdownElement (){
 function renderDropdown(){
     savedExercises.innerHTML = savedExerciseList
         .map((item, index) => 
-            `<p class="dropdown__element" data-id="${item.id}">${index + 1} - ${item.name}</p>`
+            `<p class="dropdown__element" data-id="${item.id}" data-image="${item.gif} data-inst="${item.inst}">${index + 1} - ${item.name}</p>`
         ).join('');
 };
 
@@ -485,11 +648,13 @@ function dropdownExercises (){
         const isAlreadySelected = bookmark.classList.contains('selected');
         const card = e.target.closest('.list__card');
         const name = card.querySelector('.exercise__name').textContent;
+        const gif = card.querySelector('.card__button--play').dataset.image;
+        const inst = card.querySelector('.card__button--play').dataset.inst;
         if(!isAlreadySelected){
             const id = crypto.randomUUID();
             bookmark.classList.add('selected');
             bookmark.dataset.savedId = id;
-            savedExerciseList.push({id,name});
+            savedExerciseList.push({id,name,gif,inst});
             savedExercises.insertAdjacentHTML('beforeend',`<p class="dropdown__element" data-id="${id}">${name}</p>`);
         }else{
             const id = bookmark.dataset.savedId;
@@ -497,6 +662,7 @@ function dropdownExercises (){
             savedExerciseList = savedExerciseList.filter(item => item.id !== id);
             savedExercises.querySelector(`[data-id="${id}"]`)?.remove();
         }
+        bookmarkIconStack();
         renderDropdown();
     })
 };
@@ -510,10 +676,16 @@ function renderExercises (){
                 return e.muscle == 'biceps';
             }if(muscleName == 'triceps'){
                 return e.muscle == 'triceps';
-            }if(muscleName == 'forearms'){
-                return e.muscle == 'forearms';
-            }if(muscleName == 'traps'){
-                return e.muscle == 'traps';
+            }if (muscleName == 'forearms') {
+                return e.muscle == 'forearms' ||
+                    (e.muscle == 'biceps' && (
+                            e.name.toLowerCase().includes('hammer') ||
+                            e.name.toLowerCase().includes('reverse') ||
+                            e.name.toLowerCase().includes('zottman') ||
+                            e.name.toLowerCase().includes('neutral wrist curl') ||
+                            e.name.toLowerCase().includes('cross body')
+                        )
+                    );
             }if(muscleName == 'neck'){
                 return e.muscle == 'levator-scapulae';
             }else{
@@ -523,290 +695,318 @@ function renderExercises (){
         );
     if(muscleHead){
         filtered = filtered.filter((e) =>{
+            const name = e.name.toLowerCase();
             //chest
+            if (muscleHead == 'serratus-anterior') {
+                return e.muscle == 'serratus-anterior';
+            }
             if (muscleHead == 'upper') {
                 return e.muscle == 'pectorals' && (
-                    e.name.toLowerCase().includes('incline') ||
-                    e.name.toLowerCase().includes('low fly') ||
-                    e.name.toLowerCase().includes('upper chest')
+                    name.includes('incline') ||
+                    name.includes('low fly') ||
+                    name.includes('upper chest') ||
+                    name.includes('reverse grip')
                 );
             }
 
             if (muscleHead == 'middle') {
-                return e.muscle == 'pectorals' && (
-                    e.name.toLowerCase().includes('bench press') && !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline') ||
-                    e.name.toLowerCase().includes('push up') && !e.name.toLowerCase().includes('decline') && !e.name.toLowerCase().includes('incline') ||
-                    e.name.toLowerCase().includes('chest press') && !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline') ||
-                    e.name.toLowerCase().includes('fly') && !e.name.toLowerCase().includes('incline') && !e.name.toLowerCase().includes('decline')
+                return e.muscle === 'pectorals' && (
+                    name.includes('flat') ||
+                    name.includes('bench press') ||
+                    name.includes('push up') ||
+                    (!name.includes('incline') && 
+                        !name.includes('decline') && 
+                        !name.includes('dip') && 
+                        !name.includes('pullover') && 
+                        !name.includes('low fly'))
                 );
             }
             if (muscleHead == 'lower') {
                 return e.muscle == 'pectorals' && (
-                    e.name.toLowerCase().includes('decline') ||
-                    e.name.toLowerCase().includes('dip') ||
-                    e.name.toLowerCase().includes('pullover')
+                    name.includes('decline') ||
+                    name.includes('dip') ||
+                    name.includes('pullover')
                 );
             }
             //legs
-            if(muscleHead == 'quads'){
+            if (muscleHead == 'quads'){
                 return e.muscle == 'quads';
-            }if(muscleHead == 'hams'){
-                return e.muscle == 'hamstrings';
-            }if(muscleHead == 'adductors'){
-                return e.muscle == 'adductors';
-            }if(muscleHead == 'abductors'){
-                return e.muscle == 'abductors';
-            }if(muscleHead == 'soleus'){
-                return e.muscle == 'calves' && e.name.toLowerCase().includes('seated');
-            }if(muscleHead == 'gastro'){
-                return e.muscle == 'calves' && !e.name.toLowerCase().includes('seated');
             }
-            if(muscleHead == 'gastro'){
-                return e.muscle == 'calves' && !e.name.toLowerCase().includes('seated');
+            if (muscleHead == 'hams'){
+                return e.muscle == 'hamstrings';
+            }
+            if (muscleHead == 'adductor'){
+                return e.muscle == 'adductors';
+            }
+            if (muscleHead == 'abductor'){
+                return e.muscle == 'abductors';
+            }
+            if (muscleHead == 'soleus'){
+                return e.muscle == 'calves' &&
+                    name.includes('seated') &&
+                        (
+                            name.includes('calf raise') ||
+                            name.includes('calf press')
+                        );
+            }
+            if (muscleHead == 'gastro'){
+                return e.muscle == 'calves' &&
+                    !name.includes('seated') &&
+                    !name.includes('reverse calf raise') &&
+                    !name.includes('toe raise') &&
+                    !name.includes('ankle circles');
             }
             if (muscleHead == 'maximus') {
                 return e.muscle == 'glutes' && (    
-                    e.name.toLowerCase().includes('squat') ||
-                    e.name.toLowerCase().includes('deadlift') ||
-                    e.name.toLowerCase().includes('bridge') ||
-                    e.name.toLowerCase().includes('thrust') ||
-                    e.name.toLowerCase().includes('lunge') ||
-                    e.name.toLowerCase().includes('step up') ||
-                    e.name.toLowerCase().includes('extension') ||
-                    e.name.toLowerCase().includes('kickback') ||
-                    e.name.toLowerCase().includes('pull through') ||
-                    e.name.toLowerCase().includes('press') ||
-                    e.name.toLowerCase().includes('swing')
+                    name.includes('squat') ||
+                    name.includes('deadlift') ||
+                    name.includes('bridge') ||
+                    name.includes('thrust') ||
+                    name.includes('lunge') ||
+                    name.includes('step up') ||
+                    name.includes('extension') ||
+                    name.includes('kickback') ||
+                    name.includes('pull through') ||
+                    name.includes('press') ||
+                    name.includes('swing')
                 );
             }   
             if (muscleHead == 'medius') {
                 return e.muscle == 'glutes' && (
-                    e.name.toLowerCase().includes('rotation') ||
-                    e.name.toLowerCase().includes('lateral') ||
-                    e.name.toLowerCase().includes('side') ||
-                    e.name.toLowerCase().includes('monster walk') ||
-                    e.name.toLowerCase().includes('abduction') ||
-                    e.name.toLowerCase().includes('curtsy') ||
-                    e.name.toLowerCase().includes('outside leg') ||
-                    e.name.toLowerCase().includes('inside leg')
+                    name.includes('rotation') ||
+                    name.includes('lateral') ||
+                    name.includes('side') ||
+                    name.includes('monster walk') ||
+                    name.includes('abduction') ||
+                    name.includes('curtsy') ||
+                    name.includes('outside leg') ||
+                    name.includes('inside leg')
                 );
             }
             //core
             if (muscleHead == 'external') {
                 return e.muscle == 'abs' && (
-                    e.name.toLowerCase().includes('side bend') ||
-                    e.name.toLowerCase().includes('side plank') ||
-                    e.name.toLowerCase().includes('pallof') ||
-                    e.name.toLowerCase().includes('windmill') ||
-                    e.name.toLowerCase().includes('wood chop') ||
-                    e.name.toLowerCase().includes('woodchopper') ||
-                    e.name.toLowerCase().includes('lateral') ||
-                    e.name.toLowerCase().includes('oblique crunch')
+                    name.includes('twist') ||
+                    name.includes('twisting') ||
+                    name.includes('side bend') ||
+                    name.includes('side plank') ||
+                    name.includes('pallof') ||
+                    name.includes('windmill') ||
+                    name.includes('wood chop') ||
+                    name.includes('woodchopper') ||
+                    name.includes('lateral') ||
+                    name.includes('oblique crunch')||
+                    name.includes('plank') ||
+                    name.includes('l-sit') ||
+                    name.includes('dead bug')
                 );
             }
             if (muscleHead == 'internal') {
                 return e.muscle == 'abs' && (
-                    e.name.toLowerCase().includes('twist') ||
-                    e.name.toLowerCase().includes('twisting') ||
-                    e.name.toLowerCase().includes('bicycle') ||
-                    e.name.toLowerCase().includes('air bike') ||
-                    e.name.toLowerCase().includes('russian') ||
-                    e.name.toLowerCase().includes('cross body') ||
-                    e.name.toLowerCase().includes('elbow to knee') ||
-                    e.name.toLowerCase().includes('wiper')
+                    name.includes('twist') ||
+                    name.includes('twisting') ||
+                    name.includes('side bend') ||
+                    name.includes('bicycle') ||
+                    name.includes('air bike') ||
+                    name.includes('pallof') ||
+                    name.includes('russian') ||
+                    name.includes('cross body') ||
+                    name.includes('elbow to knee') ||
+                    name.includes('wiper')||
+                    name.includes('plank') ||
+                    name.includes('l-sit') ||
+                    name.includes('dead bug') 
                 );
             }
             if (muscleHead == 'rectus') {
                 return e.muscle == 'abs' && (
-                    e.name.toLowerCase().includes('crunch') ||
-                    e.name.toLowerCase().includes('sit up') ||
-                    e.name.toLowerCase().includes('leg raise') ||
-                    e.name.toLowerCase().includes('knee raise') ||
-                    e.name.toLowerCase().includes('v up') ||
-                    e.name.toLowerCase().includes('jackknife') ||
-                    e.name.toLowerCase().includes('toe touch') ||
-                    e.name.toLowerCase().includes('heel touch')
+                    name.includes('crunch') ||
+                    name.includes('sit up') ||
+                    name.includes('leg raise') ||
+                    name.includes('knee raise') ||
+                    name.includes('v up') ||
+                    name.includes('jackknife') ||
+                    name.includes('toe touch') ||
+                    name.includes('heel touch')||
+                    name.includes('plank') ||
+                    name.includes('l-sit') ||
+                    name.includes('dead bug')
                 );
             }
-            if (muscleHead == 'transverse') {
+            if (muscleHead == 'trans') {
                 return e.muscle == 'abs' && (
-                    e.name.toLowerCase().includes('plank') ||
-                    e.name.toLowerCase().includes('rollerout') ||
-                    e.name.toLowerCase().includes('rollout') ||
-                    e.name.toLowerCase().includes('dead bug') ||
-                    e.name.toLowerCase().includes('hollow') ||
-                    e.name.toLowerCase().includes('vacuum') ||
-                    e.name.toLowerCase().includes('flutter kick') ||
-                    e.name.toLowerCase().includes('bird dog')
+                    name.includes('plank') ||
+                    name.includes('rollerout') ||
+                    name.includes('rollout') ||
+                    name.includes('dead bug') ||
+                    name.includes('hollow') ||
+                    name.includes('vacuum') ||
+                    name.includes('flutter kick') ||
+                    name.includes('bird dog')||
+                    name.includes('leg raise') ||
+                    name.includes('knee raise') ||
+                    name.includes('reverse crunch')||
+                    name.includes('plank') ||
+                    name.includes('l-sit') ||
+                    name.includes('dead bug')  
                 );
             }
             //forearms
             if (muscleHead == 'brac') {
                 return (e.muscle == 'biceps' || e.muscle == 'forearms') && (
-                    e.name.toLowerCase().includes('hammer') ||
-                    e.name.toLowerCase().includes('reverse') ||
-                    e.name.toLowerCase().includes('zottman') ||
-                    e.name.toLowerCase().includes('neutral') ||
-                    e.name.toLowerCase().includes('cross body')
+                    name.includes('hammer') ||
+                    name.includes('reverse') ||
+                    name.includes('zottman') ||
+                    name.includes('neutral') ||
+                    name.includes('cross body')
                 );
             }
             if (muscleHead == 'extensor') {
                 return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
-                    e.name.toLowerCase().includes('reverse wrist curl') ||
-                    e.name.toLowerCase().includes('palms down') ||
-                    e.name.toLowerCase().includes('wrist extension')
+                    name.includes('reverse wrist curl') ||
+                    name.includes('palms down') ||
+                    name.includes('wrist extension')
                 );
             }
             if (muscleHead == 'flexor') {
                 return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
-                    (e.name.toLowerCase().includes('wrist curl') && 
-                    !e.name.toLowerCase().includes('reverse')) ||
-                    e.name.toLowerCase().includes('palms up') ||
-                    e.name.toLowerCase().includes('finger curl') ||
-                    e.name.toLowerCase().includes('wrist flexion')
+                    (name.includes('wrist curl') && 
+                    !name.includes('reverse')) ||
+                    name.includes('palms up') ||
+                    name.includes('finger curl') ||
+                    name.includes('wrist flexion')
                 );
             }
             if (muscleHead == 'pronator') {
                 return (e.muscle == 'forearms' || e.muscle == 'biceps') && (
-                    e.name.toLowerCase().includes('pronation') ||
-                    e.name.toLowerCase().includes('neutral wrist curl') ||
-                    e.name.toLowerCase().includes('rotate') ||
-                    e.name.toLowerCase().includes('pronated')
+                    name.includes('pronation') ||
+                    name.includes('neutral wrist curl') ||
+                    name.includes('rotate') ||
+                    name.includes('pronated')
                 );
             }
             //biceps
             if (muscleHead == 'long') {
-                return e.muscle == 'biceps' && (
-                    e.name.toLowerCase().includes('incline') ||
-                    e.name.toLowerCase().includes('close grip') ||
-                    e.name.toLowerCase().includes('narrow') ||
-                    e.name.toLowerCase().includes('drag') ||
-                    e.name.toLowerCase().includes('cross body')
-                );
+                if(muscleName == 'biceps'){
+                    return e.muscle == 'biceps' && (
+                        name.includes('incline') ||
+                        name.includes('close grip') ||
+                        name.includes('narrow') ||
+                        name.includes('drag') ||
+                        name.includes('overhead') ||
+                        name.includes('cross body')
+                    );
+                }else{
+                    return e.muscle == 'triceps' && (
+                        name.includes('overhead') ||
+                        name.includes('behind head') ||
+                        name.includes('french press') ||
+                        name.includes('kickback')||
+                        name.includes('skull crusher') ||
+                        name.includes('lying')
+                    );
+                }
             }
             if (muscleHead == 'short') {
                 return e.muscle == 'biceps' && (
-                    e.name.toLowerCase().includes('preacher') ||
-                    e.name.toLowerCase().includes('spider') ||
-                    e.name.toLowerCase().includes('concentration') ||
-                    e.name.toLowerCase().includes('wide grip') ||
-                    e.name.toLowerCase().includes('inner') ||
-                    e.name.toLowerCase().includes('overhead') ||
-                    e.name.toLowerCase().includes('high curl')
-                );
-            }
-            //triceps
-            if (muscleHead == 'long') {
-                return e.muscle == 'triceps' && (
-                    e.name.toLowerCase().includes('overhead') ||
-                    e.name.toLowerCase().includes('behind head') ||
-                    e.name.toLowerCase().includes('french press') ||
-                    e.name.toLowerCase().includes('kickback')
+                    name.includes('preacher') ||
+                    name.includes('spider') ||
+                    name.includes('concentration') ||
+                    name.includes('wide grip') ||
+                    name.includes('inner') ||
+                    name.includes('high curl')
                 );
             }
             if (muscleHead == 'medial') {
                 return e.muscle == 'triceps' && (
-                    e.name.toLowerCase().includes('reverse grip') ||
-                    e.name.toLowerCase().includes('reverse') ||
-                    e.name.toLowerCase().includes('supinated') ||
-                    e.name.toLowerCase().includes('palms in') ||
-                    e.name.toLowerCase().includes('neutral grip')
+                    name.includes('reverse grip') ||
+                    name.includes('reverse') ||
+                    name.includes('supinated') ||
+                    name.includes('palms in') ||
+                    name.includes('neutral grip')||
+                    name.includes('close grip') 
                 );
             }
-            if (muscleHead == 'lateral') {
+            if (muscleHead == 'lateral' && muscleName == 'triceps') {
                 return e.muscle == 'triceps' && (
-                    e.name.toLowerCase().includes('pushdown') ||
-                    e.name.toLowerCase().includes('skullcrusher') ||
-                    e.name.toLowerCase().includes('skull crusher') ||
-                    e.name.toLowerCase().includes('close grip') ||
-                    e.name.toLowerCase().includes('dip') ||
-                    e.name.toLowerCase().includes('tate press') ||
-                    e.name.toLowerCase().includes('diamond')
+                    name.includes('pushdown') ||
+                    name.includes('skullcrusher') ||
+                    name.includes('skull crusher') ||
+                    name.includes('close grip') ||
+                    name.includes('dip') ||
+                    name.includes('tate press') ||
+                    name.includes('diamond')||
+                    name.includes('pressdown') ||
+                    name.includes('kickback')
                 );
             }
             //shoulders
             if (muscleHead == 'front') {
                 return e.muscle == 'delts' && (
-                    e.name.toLowerCase().includes('front raise') ||
-                    e.name.toLowerCase().includes('shoulder press') ||
-                    e.name.toLowerCase().includes('military press') ||
-                    e.name.toLowerCase().includes('arnold press') ||
-                    e.name.toLowerCase().includes('overhead press') ||
-                    e.name.toLowerCase().includes('push press') ||
-                    e.name.toLowerCase().includes('cuban press')
+                    name.includes('front') ||
+                    name.includes('shoulder') ||
+                    name.includes('military') ||
+                    name.includes('arnold') ||
+                    name.includes('overhead') ||
+                    name.includes('push') ||
+                    name.includes('cuban')
                 );
             }
-            if (muscleHead == 'lateral') {
+            if (muscleHead == 'lateral' && muscleName == 'shoulders') {
                 return e.muscle == 'delts' && (
-                    e.name.toLowerCase().includes('lateral raise') ||
-                    e.name.toLowerCase().includes('side raise') ||
-                    e.name.toLowerCase().includes('upright row') ||
-                    e.name.toLowerCase().includes('y raise') ||
-                    e.name.toLowerCase().includes('iron cross')
+                    name.includes('lateral raise') ||
+                    name.includes('side raise') ||
+                    name.includes('upright row') ||
+                    name.includes('y raise') ||
+                    name.includes('iron cross')
                 );
             }
             if (muscleHead == 'rear') {
                 return e.muscle == 'delts' && (
-                    e.name.toLowerCase().includes('rear delt') ||
-                    e.name.toLowerCase().includes('reverse fly') ||
-                    e.name.toLowerCase().includes('rear fly') ||
-                    e.name.toLowerCase().includes('rear lateral') ||
-                    e.name.toLowerCase().includes('t raise') ||
-                    e.name.toLowerCase().includes('skier')
+                    name.includes('rear') ||
+                    name.includes('reverse') ||
+                    name.includes('face pull') ||
+                    name.includes('t raise') ||
+                    name.includes('skier')
                 );
             }
-            //neck
-            if (muscleHead == 'neck') {
-                return (e.muscle == 'levator-scapulae' || e.muscle == 'traps') && (
-                    e.name.toLowerCase().includes('neck') ||
-                    e.name.toLowerCase().includes('head') ||
-                    e.name.toLowerCase().includes('nod')
-                );
-            }
-            if (muscleHead == 'stern') {
-                return (e.muscle == 'levator-scapulae' || e.muscle == 'traps') && (
-                    e.name.toLowerCase().includes('neck side') ||
-                    e.name.toLowerCase().includes('side push neck') ||
-                    e.name.toLowerCase().includes('neck flex') ||
-                    e.name.toLowerCase().includes('neck rotation')
-                );
             //back
-            }if (muscleHead == 'traps') {
+            if (muscleHead == 'traps') {
                 return (e.muscle == 'traps' || e.muscle == 'upper-back') && (
-                    e.name.toLowerCase().includes('shrug') ||
-                    e.name.toLowerCase().includes('upright row') ||
-                    e.name.toLowerCase().includes('face pull') ||
-                    e.name.toLowerCase().includes('y raise') ||
-                    e.name.toLowerCase().includes('scapular')
+                    name.includes('shrug') ||
+                    name.includes('upright row') ||
+                    name.includes('face pull') ||
+                    name.includes('y raise') ||
+                    name.includes('scapular')
                 );
             }
             if (muscleHead == 'terres') {
                 return (e.muscle == 'lats' || e.muscle == 'upper-back') && (
-                    e.name.toLowerCase().includes('teres') ||
-                    e.name.toLowerCase().includes('straight arm pulldown') ||
-                    e.name.toLowerCase().includes('kayak') ||
-                    e.name.toLowerCase().includes('wide grip pulldown') ||
-                    e.name.toLowerCase().includes('close grip pulldown')
+                    name.includes('teres') ||
+                    name.includes('straight arm pulldown') ||
+                    name.includes('kayak') ||
+                    name.includes('wide grip pulldown') ||
+                    name.includes('close grip pulldown')
                 );
             }
             if (muscleHead == 'lats') {
                 return e.muscle == 'lats' && (
-                    e.name.toLowerCase().includes('pulldown') ||
-                    e.name.toLowerCase().includes('pull up') ||
-                    e.name.toLowerCase().includes('chin up') ||
-                    e.name.toLowerCase().includes('row') ||
-                    e.name.toLowerCase().includes('pullover') ||
-                    e.name.toLowerCase().includes('lat')
+                    name.includes('pulldown') ||
+                    name.includes('pull up') ||
+                    name.includes('chin up') ||
+                    name.includes('row') ||
+                    name.includes('pullover') ||
+                    name.includes('lat')
                 );
             }
             if (muscleHead == 'erector') {
                 return (e.muscle == 'spine' || e.bodyPart == 'back') && (
-                    e.name.toLowerCase().includes('hyperextension') ||
-                    e.name.toLowerCase().includes('back extension') ||
-                    e.name.toLowerCase().includes('good morning') ||
-                    e.name.toLowerCase().includes('superman') ||
-                    e.name.toLowerCase().includes('deadlift') ||
-                    e.name.toLowerCase().includes('reverse hyper')
+                    name.includes('hyperextension') ||
+                    name.includes('back extension') ||
+                    name.includes('good morning') ||
+                    name.includes('superman') ||
+                    name.includes('deadlift') ||
+                    name.includes('reverse hyper')
                 );
             }
         })
@@ -819,16 +1019,24 @@ function renderExercises (){
                 return e.equipment == 'bodyweight' || e.equipment == 'other';
             }
             if (exerciseType == 'free'){
-                return e.equipment == 'barbell' || e.equipment == 'ez-bar' || e.equipment == 'kettlebell' || e.equipment == 'sled' || e.equipment == 'band';
+                return e.equipment == 'dumbbell' || e.equipment == 'barbell' || e.equipment == 'ez-bar' || e.equipment == 'kettlebell' || e.equipment == 'sled' ;
             }
             if (exerciseType == 'machine'){
                 return e.equipment == 'machine' || e.equipment == 'cable' || e.equipment == 'lever' || e.equipment == 'smith';
             }
+            if (exerciseType == 'resistance'){
+                return e.equipment == 'resistance' || e.equipment == 'band' ;
+            }
+            if (exerciseType == 'cardio'){
+                return e.category == 'cardio' || e.bodyPart == 'cardio' || e.muscle == 'cardio';
+            }
+            if (exerciseType == 'stretch'){
+                return e.category == 'stretching' || e.name == 'stretch';
+            }
         })     
     }
-
     if(!filtered.length == 0){    
-        exercisesNumber.innerText = `(${filtered.length})`;
+        exercisesNumber.innerText = ` (${filtered.length})`;
     }else{
         exercisesNumber.innerText = '';
     }
@@ -902,13 +1110,14 @@ function renderVisualTable (){
         const contentWeightN = document.createElement('p');
         contentWeightN.className = 'content__weight--number';
 
+        const contentWeightT = document.createElement('p');    
+        contentWeightT.className = 'content__weight--type';
         if(el.weights === '-'){
-            contentWeightN.textContent = 'Body';
+            contentWeightN.textContent = el.weights;
+            contentWeightT.textContent = ''; 
             contentWeight.append(contentWeightN);
         }else{
             contentWeightN.textContent = el.weights;
-            const contentWeightT = document.createElement('p');
-            contentWeightT.className = 'content__weight--type';
             contentWeightT.textContent = el.unit; 
             contentWeight.append(contentWeightN,contentWeightT);
         }
@@ -943,44 +1152,67 @@ function renderVisualTable (){
     )
 };
 
+function sepearatorWidth(){
+    if(visualExercises.length > 0){
+        visualTable.querySelector('.table__headline').style.setProperty('--after-width','calc(100% - 1.5rem)');
+        finishDownloadBtn.classList.add('selected');
+    }else{
+        visualTable.querySelector('.table__headline').style.setProperty('--after-width','calc(100% - 3rem)');
+        finishDownloadBtn.classList.remove('selected');
+    }
+};
+
 //the button which adds the selcted and customized exercise to the display table
 addBtn.addEventListener('click',(e)=>{
     e.preventDefault();
-    const name = chosenExercise.textContent;
-    const weights = chosenExerciseWeight.textContent;
-    const set = chosenExerciseSets.textContent;
-    const rep = chosenExerciseReps.textContent;
-    let unit ; 
-    if(document.querySelector('.program__unit--kg').classList.contains('selected')){
-        unit = 'Kg';
-    }else{
-        unit = 'Lb';
+    if(addBtn.classList.contains('selected')){
+        const name = chosenExerciseName.textContent;
+        const weights = chosenExerciseWeight.textContent;
+        const set = chosenExerciseSets.textContent;
+        const rep = chosenExerciseReps.textContent;
+        let unit ; 
+        if(document.querySelector('.program__unit--kg').classList.contains('selected')){
+            unit = 'Kg';
+        }else{
+            unit = 'Lb';
+        }
+        const emptyE = name == "------";
+        const emptyS = set == "-";
+        const emptyR = rep == "-";
+        if(emptyS){
+            document.querySelector('.input__number--sets').classList.add('err');
+        }
+        if(emptyR){
+            document.querySelector('.input__number--reps').classList.add('err');
+        }
+        if(!emptyE && !emptyR && !emptyS){
+            visualExercises.push({name,weights,unit,rep,set});
+            renderVisualTable();
+            chosenExerciseName.textContent = "------";
+            chosenExerciseWeight.textContent = "-";
+            chosenExerciseSets.textContent = "-";
+            chosenExerciseReps.textContent = "-";
+            weight.value = 0;
+            reps.value = 12;
+            sets.value = 4;
+            chosenExercise.classList.remove('.selected');
+            addBtn.classList.remove('selected');
+            programBtnPlay.classList.remove('selected');
+            finishDownloadBtn.classList.add('selected');
+        }else{
+            return;
+        }
+        types.forEach((t)=>{
+            t.classList.remove('selected');
+        })
+        document.querySelector('.program__type--hyp').classList.add('selected');
+        units.forEach((u)=>{
+            u.classList.remove('selected');
+        })
+        document.querySelector('.program__unit--kg').classList.add('selected');
+        chosenExercise.classList.remove('selected');
+        sepearatorWidth();
     }
-    const emptyE = chosenExercise.textContent == "------";
-    const emptyS = chosenExerciseSets.textContent == "-";
-    const emptyR = chosenExerciseReps.textContent == "-";
-    if(!emptyE && !emptyR && !emptyS){
-        visualExercises.push({name,weights,unit,rep,set});
-        renderVisualTable();
-        chosenExercise.textContent = "------";
-        chosenExerciseWeight.textContent = "-";
-        chosenExerciseSets.textContent = "-";
-        chosenExerciseReps.textContent = "-";
-        weight.value = 0;
-        reps.value = 12;
-        sets.value = 4;
-        document.querySelector('.choice__exercise').style.border = 'none';
-    }else{
-        return;
-    }
-    types.forEach((t)=>{
-        t.classList.remove('selected');
-    })
-    document.querySelector('.program__type--hyp').classList.add('selected');
-    units.forEach((u)=>{
-        u.classList.remove('selected');
-    })
-    document.querySelector('.program__unit--kg').classList.add('selected');
 });
 
 //the delete button from the table
@@ -992,6 +1224,7 @@ visualTable.addEventListener('click',(e)=>{
     const index = Number(deleteBtn.dataset.index);
     visualExercises.splice(index,1);
     renderVisualTable();
+    sepearatorWidth();
 });
 
 //the download button which generates program canvas
@@ -1022,7 +1255,7 @@ finishDownloadBtn.addEventListener('click',(e)=>{
         }).then(canvas =>{
         const imageUrl = canvas.toDataURL('image/png');
         const link = document.createElement('a');
-        link.download = `workout-plan-${nameProgram.value.replace(/\s/g, '-').toLowerCase()}.png`;
+        link.download = `workout-plan-${nameProgram.value.replace(/\s/g, '-')}.png`;
         link.href = imageUrl;
         document.body.appendChild(link);
         link.click();
@@ -1033,8 +1266,8 @@ finishDownloadBtn.addEventListener('click',(e)=>{
         programStatus.innerText = 'Program downloaded ✔';
     })
     }
+    sepearatorWidth();
 });
-
 
 searchBarValuesSelect();
 searchBarValues ();
@@ -1043,3 +1276,7 @@ customiseDropdownElement();
 exerciseInfo();
 bookmarkElementsSelect ();
 popupShow ();
+popupShowProgram ();
+bookmarkIconStack ();
+focusFunction ();
+blurFunction ();

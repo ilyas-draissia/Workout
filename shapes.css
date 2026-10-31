@@ -4,12 +4,6 @@
     transform : translate(50%,-50%);
     background-color: #d75252;
 }
-/* .muscle__back:hover .shape, .muscle__glutes:hover .shape, .muscle__legs:hover .shape{
-    background-color: #852b4f;
-}
-.figure > .shape:hover{
-    background-color: #852b4f;
-} */
 .shape.traps--top {
     aspect-ratio: 2.278;
     clip-path: shape(from 44% 10.04%,line by 1.7% 15.08%,line by 0.11% 15.18%,line by 0.74% 19.49%,line by 0.13% 12.85%,line by -2.42% 8.48%,line by -3.96% 7.08%,line by -8.29% 0.86%,line by -9.8% 2.36%,line by -11.3% 5.15%,line by -3.77% 3.43%,line by -3.96% -0.43%,line by -1.6% -0.21%,line by -1.6% 0.21%,line by 9.14% -13.95%,line by 10.55% -15.45%,line by 4.99% -6.01%,line by 1.79% -3.65%,line by 1.7% -11.59%,line by 2.67% -17.13%,line by 2.73% -16.59%,line by 1.2% -8.19%,line by 2.16% -5.29%,line by 2.55% -1.73%,line by 2.88% 1.31%,close,move by 11.99% 0%,line by -1.7% 15.08%,line by -0.11% 15.18%,line by -0.74% 19.49%,line by -0.13% 12.85%,line by 2.42% 8.48%,line by 3.96% 7.08%,line by 8.29% 0.86%,line by 9.8% 2.36%,line by 11.3% 5.15%,line by 3.77% 3.43%,line by 3.96% -0.43%,line by 1.6% -0.21%,line by 1.6% 0.21%,line by -9.14% -13.95%,line by -10.55% -15.45%,line by -4.99% -6.01%,line by -1.79% -3.65%,line by -1.7% -11.59%,line by -2.67% -17.13%,line by -2.73% -16.59%,line by -1.2% -8.19%,line by -2.16% -5.29%,line by -2.55% -1.73%,line by -2.88% 1.31%,close);
