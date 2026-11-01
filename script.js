@@ -453,6 +453,7 @@ muscles.forEach(muscle =>{
         const isAlreadySelected = muscle.classList.contains('selected');
         muscles.forEach(m => m.classList.remove('selected'));
         if(!isAlreadySelected){
+            muscleHead = null;
             muscle.classList.add('selected');
             exerciseHeads.style.backgroundColor = 'var(--bg-light)';
             typesBtn.forEach(b =>{b.classList.add('active')});
@@ -567,6 +568,7 @@ muscles.forEach(muscle =>{
             typesBtn.forEach(b =>{b.classList.remove('active')});
             typesBtn.forEach(b =>{b.classList.remove('selected')});
             exerciseHeads.style.backgroundColor = 'var(--bg)';
+            renderExercises ();
         }
 })
 })
@@ -670,7 +672,7 @@ function dropdownExercises (){
 
 //dispaly exercise based on the conditions (muscles, type, head)
 function renderExercises (){
-    exercisesContainer.innerHTML = "";
+    exercisesContainer.innerHTML = '';
     let filtered ;
         filtered = exerciseList.filter(e=>{
             if(muscleName == 'biceps'){
