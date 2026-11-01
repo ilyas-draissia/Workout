@@ -565,6 +565,7 @@ muscles.forEach(muscle =>{
             exercisesContainer.innerHTML = "";
             exercisesNumber.innerHTML = "";
             typesBtn.forEach(b =>{b.classList.remove('active')});
+            typesBtn.forEach(b =>{b.classList.remove('selected')});
             exerciseHeads.style.backgroundColor = 'var(--bg)';
         }
 })
