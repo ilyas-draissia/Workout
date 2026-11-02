@@ -1,7 +1,7 @@
 # Workout
 a website for making a custom workout program picture through a human figure muscles with heads and all types of exercises .
 # Features
-1 - Human figure back and front that has highlightable muscles through hover and touch which let select muscle you want to train visualy which is beginner freindly  .  
+1 - Human figure back and front that has highlightable muscles through hover and touch which let select muscle you want to train visually which is beginner friendly   .  
 2 - Choose from different muscle heads .  
 3 - Choose between 5 exercise types (Body-weight,Free-weight,Machine,Resistance,Stretch) or full body Cardio exercise type.  
 4 - See the exercise tutorial Gif with instructions when exploring exercises for different muscles and muscle heads also when making the workout plan .  
