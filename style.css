@@ -141,12 +141,13 @@ body{
 }
 .dialog__pop{
     margin: auto;
+    width: min(500px,100% - 1rem);
     background-color: var(--bg-dark);
     position: relative;
     border-radius: 5px;
     border: solid 1px var(--border);
     height: calc(100dvh - 2rem);
-    overflow-y: hidden;
+    overflow-y: auto;
     max-width: 450px;
 }
 .dialog__pop::backdrop{
@@ -172,10 +173,6 @@ body{
 .exercise__instructions--play{
     padding: .5rem 1rem 0 1rem;
     line-height: 1.1;
-}
-.instructions{
-    overflow-y: auto;
-    height: 200px;
 }
 .collapsed-btn {
   display: inline-block;
@@ -244,13 +241,17 @@ body{
     background-color: var(--bg);
     border: 1px solid var(--border);
     padding: .5rem;
-    border-radius: 11px 0 0 11px;
+    border-radius: 11px;
     margin-inline: 1rem;
     height: 80px;
     overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
+}
+.exercise__heads.selected{
+    background-color: var(--bg-light);
+    border-radius: 11px 0 0 11px;
 }
 .head{
     background-color: var(--text);
@@ -269,6 +270,28 @@ body{
     padding: 3px;
     font-weight: 500;
     cursor: default;
+}
+.exercise__type--cardio {
+    background-color: var(--primary-muted);
+    color: var(--text);
+    border: 2px solid var(--primary);
+    min-width: 30px;
+    padding: 3px;
+    font-weight: 500;
+}
+.exercise__type--cardio:hover{
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+}
+.exercise__type--cardio.selected{
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    color: var(--text);
+}
+.exercise__type.active:hover{
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    color: var(--text);
 }
 .exercise__type.active{
     background-color: var(--primary-muted);
@@ -311,9 +334,12 @@ body{
     overflow-y: auto;
     flex: 1 1 130px;
     margin: 0 1rem 20px 1rem;
-    border-radius: 11px 0 0 11px;
+    border-radius: 11px;
     border: 1px solid var(--border);
     padding-inline: .5rem;
+}
+.exercise__list.selected{
+    border-radius: 11px 0 0 11px;
 }
 .list__card{
     background-color: var(--bg-light);
@@ -639,7 +665,12 @@ body{
 .program__type--hyp.selected{
     border-radius: 0 calc(1rem - 2px) calc(1rem - 2px) 0 ;
 }
-
+.exercise__types--seperator{
+    width: 4px;
+    height: 90%;
+    background-color: var(--text-muted);
+    margin: auto;
+}
 .program__unit--kg{
     border-radius: calc(1rem - 2px) 0 0 calc(1rem - 2px);
 }
@@ -664,22 +695,14 @@ body{
 .program__visual{
     display: flex;
     flex-direction: column;
-    gap: .5rem;
-    flex: 1;
+    flex: .8;
     position: relative;
     margin-inline: .5rem;
-}
-.visual__edit{
-    margin-inline: 1rem;
-    top: .5rem;
-    width: calc(100% - 2.5rem);
-    margin-left: .5rem;
-    position: absolute;
-    z-index: 1;
+    gap: .5rem;
 }
 .edit__name{
     width: 100%;
-    padding: .3rem .5rem ;
+    padding: .5rem ;
     border-radius: 5px;
     background-color: var(--bg-light);
     color: var(--text);
@@ -706,14 +729,18 @@ body{
 }
 .visual__table {
     background-color: var(--bg-dark);
-    border-radius: 11px 0 0 11px;
+    border-radius: 11px;
     display: grid;
     padding-inline: .5rem;
     padding-block:.5rem ;
-    grid-template-columns: 1.5rem 2fr 1.2fr 0.6fr 0.6fr 1.5rem;
-    grid-template-rows: 1rem 1.5rem auto;
+    grid-template-columns: 1.5rem 2fr 0.8fr 0.6fr 0.6fr 1.5rem;
+    grid-template-rows: 1rem 1.5rem 2rem auto;
     position: relative;
     border: 1px solid var(--border);
+    overflow: auto;
+}
+.visual__table.selected{
+    border-radius: 11px 0 0 11px;
 }
 .table__name{
     grid-column: -1 /1;
@@ -732,6 +759,9 @@ body{
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
     align-items: center;
+}
+.table__choice {
+    margin-top: .3rem;
 }
 .table__headline {
     font-weight: 600;
@@ -763,10 +793,14 @@ body{
     display: grid;
     grid-template-columns: subgrid;
     align-items: center;
-    background-color: var(--bg-light);
+    background-color: var(--text-muted);
     border-radius: 12px;
     padding-block: .6rem;
     padding-inline: .5rem;
+}
+.choice__content *{
+    color: var(--bg-light);
+    fill: var(--bg-light);
 }
 .headline--exercise{
     padding-left: .5rem;
@@ -776,9 +810,6 @@ body{
 }
 .table__headline>p:not(:nth-child(2)), .choice__content>p:not(:nth-child(1)){
     text-align: center;
-}
-.table__choice:not(:first-child){
-    margin-top: .3rem;
 }
 .visual__finish{
     display: flex;

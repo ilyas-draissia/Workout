@@ -106,3 +106,14 @@ legs:
 
 shoulders:
   - delts
+        "pectorals",
+        "triceps",
+        "quads",
+        "glutes",
+        "abs"
+        "hamstrings",
+        "calves"
+        "spine",
+        "traps",
+        "delts",
+        "forearms"

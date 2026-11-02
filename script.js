@@ -1,4 +1,5 @@
 const typesBtn = document.querySelectorAll('.exercise__type');
+const typesBtnCardio = document.querySelector('.exercise__type--cardio');
 const units = document.querySelectorAll('.program__unit');
 const types = document.querySelectorAll('.program__type');
 const reps = document.querySelector('#reps');
@@ -77,18 +78,26 @@ reverseBtn.addEventListener("click",(e)=>{
     e.preventDefault();
     const front = document.querySelector('.figure.front');
     const back = document.querySelector('.figure.back');
-    front.classList.toggle('selected');
-    back.classList.toggle('selected');
-    muscleHead = null;
-    muscleName = null;
-    exerciseType = null;
-    exerciseName.innerText ='Muscle';
-    exerciseHeads.innerHTML = '';
-    nmbr.textContent = '';
-    typeName.textContent = '(S = Stretch)';
-    muscles.forEach(m => m.classList.remove('selected'));
-    typesBtn.forEach(b =>b.classList.remove('selected'));
-    typesBtn.forEach(b =>b.classList.remove('active'));
+    if(typesBtnCardio.classList.contains('selected')){
+        front.classList.toggle('selected');
+        back.classList.toggle('selected');
+    }else{
+        console.log('object');
+        front.classList.toggle('selected');
+        back.classList.toggle('selected');
+        muscleHead = null;
+        muscleName = null;
+        exerciseType = null;
+        exerciseName.innerText ='Muscle';
+        exerciseHeads.innerHTML = '';
+        nmbr.textContent = '';
+        typeName.textContent = 'Ex: S = Stretch';
+        typeName.classList.add('selected');
+        muscles.forEach(m => m.classList.remove('selected'));
+        typesBtn.forEach(b =>b.classList.remove('selected'));
+        typesBtn.forEach(b =>b.classList.remove('active'));
+        exerciseHeads.classList.remove('selected');
+    }
     renderExercises();
 });
 
@@ -309,7 +318,7 @@ typesBtn.forEach((btn) => {
         e.preventDefault();
         const isAlreadySelected = btn.classList.contains('selected');
         typesBtn.forEach(b =>{b.classList.remove('selected')});
-        if (document.querySelector('.exercises__number').textContent == ''){
+        if (exerciseName.textContent == 'Muscle'){
             return;
         }else{
             if (!isAlreadySelected){
@@ -319,7 +328,7 @@ typesBtn.forEach((btn) => {
                 typeName.classList.remove('selected');
             }else{
                 exerciseType = '';
-                typeName.innerText = '(S = Stretch)';
+                typeName.innerText = 'Ex: S = Stretch';
                 typeName.classList.add('selected');
             }
             renderExercises ();
@@ -327,6 +336,36 @@ typesBtn.forEach((btn) => {
     });
 });
 
+//cardio type button 
+typesBtnCardio.addEventListener('click',(e)=>{
+    e.preventDefault();
+    const isAlreadySelected = typesBtnCardio.classList.contains('selected');
+        muscles.forEach(m => m.classList.remove('selected'));
+    if(!isAlreadySelected){
+        muscleHead = null;
+        typesBtnCardio.classList.add('selected');
+        muscleHead = 'cardio';
+        muscleName = 'cardio';
+        typeName.classList.remove('selected');
+        typeName.innerText = 'Cardio';
+        exerciseName.textContent = 'Cardio';
+        nmbr.innerText = '';
+        exerciseHeads.innerHTML = '';
+        exerciseHeads.classList.remove('selected');
+        typesBtn.forEach(e =>{e.classList.remove('active')});
+        muscles.forEach(e =>{e.classList.add('selected')});
+    }else{
+        typesBtnCardio.classList.remove('selected');
+        typeName.classList.add('selected');
+        typeName.innerText = 'Ex: S = Stretch';
+        exerciseName.textContent = 'Muscle';
+        muscleName = null;
+        muscleHead = null;
+        exercisesContainer.innerHTML = "";
+        exercisesNumber.innerHTML = "";
+    }
+    renderExercises();
+});
 //input focus
 function focusFunction (){
     weight.addEventListener('focus',function(e){
@@ -452,10 +491,17 @@ muscles.forEach(muscle =>{
         let n = 0;
         const isAlreadySelected = muscle.classList.contains('selected');
         muscles.forEach(m => m.classList.remove('selected'));
-        if(!isAlreadySelected){
+        if(!isAlreadySelected || (isAlreadySelected && typeName.innerText == 'Cardio')){
+            typesBtnCardio.classList.remove('selected');
+            typeName.classList.add('selected');
+            typeName.innerText = 'Ex: S = Stretch';
+            exerciseName.textContent = 'Muscle';
+            muscleName = null;
             muscleHead = null;
+            exercisesContainer.innerHTML = "";
+            exercisesNumber.innerHTML = "";
             muscle.classList.add('selected');
-            exerciseHeads.style.backgroundColor = 'var(--bg-light)';
+            exerciseHeads.classList.add('selected');
             typesBtn.forEach(b =>{b.classList.add('active')});
             if(muscle.classList.contains("forearm--back")){           
             exerciseName.innerText ='Forearm';
@@ -567,7 +613,7 @@ muscles.forEach(muscle =>{
             exercisesNumber.innerHTML = "";
             typesBtn.forEach(b =>{b.classList.remove('active')});
             typesBtn.forEach(b =>{b.classList.remove('selected')});
-            exerciseHeads.style.backgroundColor = 'var(--bg)';
+            exerciseHeads.classList.remove('selected');
             renderExercises ();
         }
 })
@@ -691,6 +737,8 @@ function renderExercises (){
                     );
             }if(muscleName == 'neck'){
                 return e.muscle == 'levator-scapulae';
+            }if(muscleName == 'cardio'){
+                return e.muscle == 'cardio';
             }else{
                 return e.bodyPart == muscleName;
             }
@@ -713,7 +761,7 @@ function renderExercises (){
             }
 
             if (muscleHead == 'middle') {
-                return e.muscle === 'pectorals' && (
+                return e.muscle === 'pectorals' && e.secondaryMuscles.includes('pectorals') &&(
                     name.includes('flat') ||
                     name.includes('bench press') ||
                     name.includes('push up') ||
@@ -1012,6 +1060,10 @@ function renderExercises (){
                     name.includes('reverse hyper')
                 );
             }
+            //cardio
+            if (muscleHead == 'cardio') {
+                return e.muscle == 'cardio' || e.bodyPart == 'cardio' || e.category == 'cardio';
+            }
         })
     }
 
@@ -1030,9 +1082,6 @@ function renderExercises (){
             if (exerciseType == 'resistance'){
                 return e.equipment == 'resistance' || e.equipment == 'band' ;
             }
-            if (exerciseType == 'cardio'){
-                return e.category == 'cardio' || e.bodyPart == 'cardio' || e.muscle == 'cardio';
-            }
             if (exerciseType == 'stretch'){
                 return e.category == 'stretching' || e.name == 'stretch';
             }
@@ -1040,8 +1089,10 @@ function renderExercises (){
     }
     if(!filtered.length == 0){    
         exercisesNumber.innerText = ` (${filtered.length})`;
+        exercisesContainer.classList.add('selected');
     }else{
         exercisesNumber.innerText = '';
+        exercisesContainer.classList.remove('selected');
     }
     filtered.forEach((ce, index) =>{
         let g = index + 1;
@@ -1082,7 +1133,7 @@ function renderExercises (){
         secondChild.append(buttonFirst,buttonSecond);
 
         element.append(firstChild,secondChild);
-        exercisesContainer.insertAdjacentElement('afterbegin',element)
+        exercisesContainer.insertAdjacentElement('afterbegin',element);
     })
 
 };
@@ -1148,8 +1199,18 @@ function renderVisualTable (){
         contentDelete.innerHTML = svg;
 
         visualTable.appendChild(exercise);
+                
         if(visualExercises.length > 0){
             programStatus.innerText = 'Program developing ';
+            visualTable.classList.add('selected');
+            const items = visualExercises.length;
+            const itemNumbers = Math.max(0,items);
+            const phrase = 'max-content '.repeat(itemNumbers);
+            console.log(items,itemNumbers,phrase);
+            visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem ${phrase}auto`;
+        }else{
+            visualTable.classList.remove('selected');
+            visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem auto`;
         }
     }
     )
@@ -1228,14 +1289,29 @@ visualTable.addEventListener('click',(e)=>{
     visualExercises.splice(index,1);
     renderVisualTable();
     sepearatorWidth();
+    if(visualExercises.length > 0){
+            programStatus.innerText = 'Program developing ';
+            visualTable.classList.add('selected');
+            const items = visualExercises.length;
+            const itemNumbers = Math.max(0,items);
+            const phrase = 'max-content '.repeat(itemNumbers);
+            console.log(items,itemNumbers,phrase);
+            visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem ${phrase}auto`;
+        }else{
+            visualTable.classList.remove('selected');
+            visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem auto`;
+        }
 });
 
 //the download button which generates program canvas
 finishDownloadBtn.addEventListener('click',(e)=>{
     e.preventDefault();
-    if(visualExercises.length >= 2){
+    setTimeout(()=>{
+        if(visualExercises.length >= 2){
         html2canvas(visualTable,{
-            windowWidth : 768,
+            Width : 768,
+            windowWidth: visualTable.clientWidth,
+            windowHeight: visualTable.scrollHeight,
             onclone:(con)=>{
                 const workoutName = con.querySelector('.table__name');
                 const logo = con.querySelector('.table__logo');
@@ -1267,11 +1343,13 @@ finishDownloadBtn.addEventListener('click',(e)=>{
         visualTable.querySelectorAll(".table__choice").forEach(row => row.remove());
         nameProgram.value = '';
         programStatus.innerText = 'Program downloaded ✔';
+        visualTable.classList.remove('selected');
+        visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem auto`;
     })
     }
+    },1000)
     sepearatorWidth();
 });
-
 searchBarValuesSelect();
 searchBarValues ();
 dropdownExercises();
