@@ -78,13 +78,11 @@ reverseBtn.addEventListener("click",(e)=>{
     e.preventDefault();
     const front = document.querySelector('.figure.front');
     const back = document.querySelector('.figure.back');
+    front.classList.toggle('selected');
+    back.classList.toggle('selected');
     if(typesBtnCardio.classList.contains('selected')){
-        front.classList.toggle('selected');
-        back.classList.toggle('selected');
+        return;
     }else{
-        console.log('object');
-        front.classList.toggle('selected');
-        back.classList.toggle('selected');
         muscleHead = null;
         muscleName = null;
         exerciseType = null;
@@ -348,11 +346,12 @@ typesBtnCardio.addEventListener('click',(e)=>{
         muscleName = 'cardio';
         typeName.classList.remove('selected');
         typeName.innerText = 'Cardio';
-        exerciseName.textContent = 'Cardio';
+        exerciseName.textContent = 'Full Body';
         nmbr.innerText = '';
         exerciseHeads.innerHTML = '';
         exerciseHeads.classList.remove('selected');
         typesBtn.forEach(e =>{e.classList.remove('active')});
+        typesBtn.forEach(e =>{e.classList.remove('selected')});
         muscles.forEach(e =>{e.classList.add('selected')});
     }else{
         typesBtnCardio.classList.remove('selected');
@@ -503,14 +502,7 @@ muscles.forEach(muscle =>{
             muscle.classList.add('selected');
             exerciseHeads.classList.add('selected');
             typesBtn.forEach(b =>{b.classList.add('active')});
-            if(muscle.classList.contains("forearm--back")){           
-            exerciseName.innerText ='Forearm';
-            exerciseHeads.innerHTML = 
-            `<button class="head head-${n+=1} brach">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
-            nmbr.textContent = ` (${n})`;
-            muscleName ='forearms' ;
-            }
-            if(muscle.classList.contains("muscle__legs--back")){
+            if(muscle.classList.contains("muscle__legs--back") || muscle.classList.contains("muscle__legs--front")){
                 exerciseName.innerText ='Legs';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} medius">medius</button><button class="head head-${n+=1} maximus">maximus</button>
@@ -520,19 +512,12 @@ muscles.forEach(muscle =>{
                 nmbr.textContent = ` (${n})`;
                 muscleName ='legs';
             }
-            if(muscle.classList.contains("triceps--back")){
+            if(muscle.classList.contains("triceps--back") || muscle.classList.contains("triceps--front")){
                 exerciseName.innerText ='Triceps';
                 exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} longh">long head</button><button class="head head-${n+=1} lateralh">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
+                `<button class="head head-${n+=1} long">long head</button><button class="head head-${n+=1} lateral">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
                 nmbr.textContent = ` (${n})`;
                 muscleName ='triceps'; ; 
-            }
-            if(muscle.classList.contains("shoulder--back")){           
-                exerciseName.innerText ='Shoulder';
-                exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
-                nmbr.textContent = ` (${n})`;
-                muscleName ='Shoulders' ;  
             }
             if(muscle.classList.contains("muscle__back")){           
                 exerciseName.innerText ='Back';
@@ -542,7 +527,6 @@ muscles.forEach(muscle =>{
                 nmbr.textContent = ` (${n})`;
                 muscleName ='back';
             }
-
             if(muscle.classList.contains("chest")){
                 exerciseName.innerText ='Chest';
                 exerciseHeads.innerHTML = 
@@ -552,12 +536,12 @@ muscles.forEach(muscle =>{
             }
             if(muscle.classList.contains("muscle__neck")){           
                 exerciseName.innerText ='Neck';
-                exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} neck">neck</button>`;
-                nmbr.textContent = ` (${n})`;
+                exerciseHeads.innerHTML = '';
+                nmbr.textContent = '';
                 muscleName ='neck';
+                exerciseHeads.classList.remove('selected');
             }
-            if(muscle.classList.contains("shoulder--front")){
+            if(muscle.classList.contains("shoulder--back") || muscle.classList.contains("shoulder--front")){
                 exerciseName.innerText ='shoulder';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} front">front</button><button class="head head-${n+=1} lateral">lateral</button><button class="head head-${n+=1} rear">rear</button>`;
@@ -571,29 +555,12 @@ muscles.forEach(muscle =>{
                 nmbr.textContent = ` (${n})`;
                 muscleName ='core';
             }
-            if(muscle.classList.contains("forearm--front")){           
+            if(muscle.classList.contains("forearm--front") || muscle.classList.contains("forearm--back")){           
                 exerciseName.innerText ='Forearms';
                 exerciseHeads.innerHTML = 
                 `<button class="head head-${n+=1} brac">brachioradialis</button><button class="head head-${n+=1} flexor">flexors</button><button class="head head-${n+=1} extensor">extensors</button><button class="head head-${n+=1} pronator">pronator</button>`;
                 nmbr.textContent = ` (${n})`;
                 muscleName ='forearms';
-            }
-            if(muscle.classList.contains("muscle__legs--front")){
-                exerciseName.innerText ='Legs';
-                exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} medius">medius</button><button class="head head-${n+=1} maximus">maximus</button>
-                <button class="head head-${n+=1} hams">hams</button><button class="head head-${n+=1} quads">quads</button>
-                <button class="head head-${n+=1} adductor">adductors</button><button class="head head-${n+=1} abductor">abductors</button>
-                <button class="head head-${n+=1} gastro">gastrocnemius</button><button class="head head-${n+=1} soleus">soleus</button>`;
-                nmbr.textContent = ` (${n})`;
-                muscleName ='legs';
-            }
-            if(muscle.classList.contains("triceps--front")){
-                exerciseName.innerText ='Triceps';
-                exerciseHeads.innerHTML = 
-                `<button class="head head-${n+=1} long">long head</button><button class="head head-${n+=1} lateral">lateral head</button><button class="head head-${n+=1} medial">medial head</button>`;
-                nmbr.textContent = ` (${n})`;
-                muscleName ='triceps'; 
             }
             if(muscle.classList.contains("biceps")){
                 exerciseName.innerText ='Biceps';
@@ -623,6 +590,9 @@ muscles.forEach(muscle =>{
 exerciseHeads.addEventListener('click',(e)=>{
     e.preventDefault();
     const btn = e.target.closest('.head');
+    if(!btn){
+        return;
+    }
     const isAlreadySelected = btn.classList.contains('selected');
     document.querySelectorAll('.head').forEach(e=>e.classList.remove('selected'));
     if(!isAlreadySelected){
@@ -759,9 +729,8 @@ function renderExercises (){
                     name.includes('reverse grip')
                 );
             }
-
             if (muscleHead == 'middle') {
-                return e.muscle === 'pectorals' && e.secondaryMuscles.includes('pectorals') &&(
+                return e.muscle === 'pectorals' &&(
                     name.includes('flat') ||
                     name.includes('bench press') ||
                     name.includes('push up') ||
@@ -945,7 +914,7 @@ function renderExercises (){
                         name.includes('narrow') ||
                         name.includes('drag') ||
                         name.includes('overhead') ||
-                        name.includes('cross body')
+                        name.includes('cross body') 
                     );
                 }else{
                     return e.muscle == 'triceps' && (
@@ -1206,7 +1175,6 @@ function renderVisualTable (){
             const items = visualExercises.length;
             const itemNumbers = Math.max(0,items);
             const phrase = 'max-content '.repeat(itemNumbers);
-            console.log(items,itemNumbers,phrase);
             visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem ${phrase}auto`;
         }else{
             visualTable.classList.remove('selected');
@@ -1295,7 +1263,6 @@ visualTable.addEventListener('click',(e)=>{
             const items = visualExercises.length;
             const itemNumbers = Math.max(0,items);
             const phrase = 'max-content '.repeat(itemNumbers);
-            console.log(items,itemNumbers,phrase);
             visualTable.style.gridTemplateRows = `1rem 1.5rem 2rem ${phrase}auto`;
         }else{
             visualTable.classList.remove('selected');
